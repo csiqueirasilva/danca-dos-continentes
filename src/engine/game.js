@@ -1,4 +1,11 @@
 var GameON = (function() {
+	
+	// setting body style
+	document.body.style.width = '100%';
+	document.body.style.height = '100%';
+	document.body.style.padding = '0';
+	document.body.style.margin = '0';
+	
 	var mainCanvas = document.createElement('canvas');
 	
 	var ctx = mainCanvas.getContext('2d');
@@ -31,7 +38,7 @@ var GameON = (function() {
 				
 				ndcPos.x -= ndcSize.x / 2;
 				ndcPos.y -= ndcSize.y / 2;
-								
+
 				elements[i].draw(ctx, ndcPos, ndcSize);
 			}
 		}
