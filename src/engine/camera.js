@@ -7,9 +7,6 @@ function Camera (w, h) {
 
 Camera.prototype = Object.create(Element.prototype);
 
-Camera.prototype.draw = function () {
-};
-
 Camera.prototype.getNDCSize = function(x, y) {
 	
 	var xcoord = (x / this.w);
@@ -28,17 +25,7 @@ Camera.prototype.getNDCPos = function(x, y) {
 
 Camera.prototype.onFrame = function(e) {
 	// check 4 corners on frame
-	var coords = [];
-	
-	var top = e.y + e.h / 2;
-	var left = e.x - e.w / 2;
-	var right = e.x + e.w / 2;
-	var down = e.y - e.h / 2;	
-	
-	coords.push({x: right, y: top});
-	coords.push({x: left, y: top});
-	coords.push({x: right, y: down});
-	coords.push({x: left, y: down});
+	var coords = e.getCorners();
 	
 	var acc = 0;
 	

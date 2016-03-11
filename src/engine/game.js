@@ -57,6 +57,38 @@ var GameON = (function() {
 		}
 	}
 	
+	/* Events */
+	
+	var LastTopElement = null;
+	
+	mainCanvas.addEventListener('mousemove', function(e) {
+		var mouseX = e.clientX / window.innerWidth - 0.5;
+		var mouseY = 0.5 - e.clientY / window.innerHeight;
+		
+		mouseX += camera.x + mouseX * camera.w;
+		mouseY += camera.y + mouseY * camera.h;
+		
+		var topElement = null;
+		
+		for(var i = 0; i < elements.length; i++) {
+			if(elements[i].mouseOver instanceof Function) {
+				if(elements[i].visible && camera.onFrame(elements[i])) {
+					var corners = elements[i].getCorners();
+					if(mouseX <= corners[0].x && mouseX >= corners[1].x && mouseY <= corners[0].y && mouseY >= corners[2].y) {
+						topElement = elements[i];
+					}
+				}
+			}
+		}
+		
+		if(topElement !== LastTopElement) {
+			LastTopElement = topElement;
+			if(LastTopElement !== null) {
+				LastTopElement.mouseOver();
+			}
+		}
+	});
+	
 	return {
 		add: add,
 		start: animate
