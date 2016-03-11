@@ -17,7 +17,15 @@ Square.prototype.draw = function (ctx, ndcPos, ndcSize) {
 	ctx.fill();
 };
 
-Square.prototype.mouseOver = function (ctx, ndcPos, ndcSize) {
+Square.prototype.mouseOver = function () {
+	this.color = {
+		r: parseInt(255 * Math.random()),
+		g: parseInt(255 * Math.random()),
+		b: parseInt(255 * Math.random())
+	};
+};
+
+Square.prototype.mouseOut = function () {
 	this.color = {
 		r: parseInt(255 * Math.random()),
 		g: parseInt(255 * Math.random()),

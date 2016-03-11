@@ -82,7 +82,12 @@ var GameON = (function() {
 		}
 		
 		if(topElement !== LastTopElement) {
+			if(LastTopElement !== null && LastTopElement.mouseOut instanceof Function) {
+				LastTopElement.mouseOut();
+			}
+			
 			LastTopElement = topElement;
+			
 			if(LastTopElement !== null) {
 				LastTopElement.mouseOver();
 			}
