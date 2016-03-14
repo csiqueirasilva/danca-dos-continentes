@@ -5,6 +5,7 @@ function Element () {
 	this.h = 0;
 	this.z = 0;
 	this.visible = true;
+	this.mouseInteract = false;
 }
 
 Element.prototype.draw = function (ctx, ndcPos, ndcSize) {

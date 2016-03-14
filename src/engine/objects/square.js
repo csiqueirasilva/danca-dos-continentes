@@ -1,13 +1,14 @@
 function Square (ops) {
 	ops = ops || {};	
 	Element.apply(this, arguments);
-	this.w = ops.x;
-	this.h = ops.y;
+	this.w = ops.w || 0;
+	this.h = ops.h || 0;
 	this.color = {
 		r: ops.r || 0,
 		g: ops.g || 0,
 		b: ops.b || 0
 	};
+	this.mouseInteract = true;
 }
 
 Square.prototype = Object.create(Element.prototype);
