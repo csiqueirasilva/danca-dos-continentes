@@ -1,4 +1,8 @@
-var square = new Square(10, 10, 255, 255, 0);
+var square = new SquareImage({
+	x: 10,
+	y: 10,
+	imgPath: 'imgs/futuro/pecas-futuro/AFR1.png'
+});
 
 square.x = 30;
 square.y = 30;

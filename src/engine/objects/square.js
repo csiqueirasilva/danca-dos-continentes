@@ -1,11 +1,12 @@
-function Square (x, y, r, g, b) {
+function Square (ops) {
+	ops = ops || {};	
 	Element.apply(this, arguments);
-	this.w = x;
-	this.h = y;
+	this.w = ops.x;
+	this.h = ops.y;
 	this.color = {
-		r: r || 0,
-		g: g || 0,
-		b: b || 0
+		r: ops.r || 0,
+		g: ops.g || 0,
+		b: ops.b || 0
 	};
 }
 

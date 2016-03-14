@@ -1,8 +1,9 @@
-function Camera (w, h) {
+function Camera (ops) {
+	ops = ops || {};
 	Element.apply(this, arguments);
 	
-	this.w = w || 160;
-	this.h = h || 90;
+	this.w = ops.w || 160;
+	this.h = ops.h || 90;
 }
 
 Camera.prototype = Object.create(Element.prototype);
