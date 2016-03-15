@@ -48,5 +48,6 @@ SquareImage.prototype.mouseMove = function (mouseX, mouseY) {
 	
 	if(this.data[dataPos] !== 0) {
 		//image has opacity at this position, interact
+		GameON.Mouse.dragElement(this);
 	}
 };
