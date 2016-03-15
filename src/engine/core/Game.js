@@ -29,8 +29,8 @@ var GameON = (function () {
 		ndcPos.x *= w;
 		ndcPos.y *= h;
 		var ndcSize = camera.getNDCSize(element.w, element.h);
-		ndcSize.x *= w;
-		ndcSize.y *= h;
+		ndcSize.x *= w * element.scaleW;
+		ndcSize.y *= h * element.scaleH;
 
 		ndcPos.x -= ndcSize.x / 2;
 		ndcPos.y -= ndcSize.y / 2;

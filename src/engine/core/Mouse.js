@@ -1,16 +1,16 @@
 function Mouse(canvas, camera, elements) {
-	
+
 	/* Mouse click */
 	var CurrentMousePosition = {
 		x: 0,
 		y: 0
 	};
-	
+
 	var LastMousePosition = {
-		x:0, 
-		y:0
+		x: 0,
+		y: 0
 	};
-	
+
 	var MouseDown = false;
 
 	canvas.addEventListener('mousedown', function (e) {
@@ -30,10 +30,10 @@ function Mouse(canvas, camera, elements) {
 
 		mouseX += camera.x + mouseX * camera.w;
 		mouseY += camera.y + mouseY * camera.h;
-		
+
 		CurrentMousePosition.x = mouseX;
 		CurrentMousePosition.y = mouseY;
-		
+
 		var topElement = null;
 
 		for (var i = 0; i < elements.length; i++) {
@@ -54,6 +54,7 @@ function Mouse(canvas, camera, elements) {
 		if (topElement !== LastTopElement) {
 			if (LastTopElement !== null && LastTopElement.mouseOut instanceof Function) {
 				LastTopElement.mouseOut();
+				mouseUp();
 			}
 
 			LastTopElement = topElement;
@@ -62,23 +63,31 @@ function Mouse(canvas, camera, elements) {
 				LastTopElement.mouseOver();
 			}
 		}
-		
+
 		LastMousePosition.x = CurrentMousePosition.x;
 		LastMousePosition.y = CurrentMousePosition.y;
 	});
-	
+
 	// methods
-	
+
+	function mouseDown(element) {
+		document.body.style.cursor = 'move';
+		element.x += CurrentMousePosition.x - LastMousePosition.x;
+		element.y += CurrentMousePosition.y - LastMousePosition.y;
+	}
+
+	function mouseUp(element) {
+		document.body.style.cursor = 'default';
+	}
+
 	function drag(element) {
-		if(MouseDown) {
-			document.body.style.cursor = 'move';
-			element.x += CurrentMousePosition.x - LastMousePosition.x;
-			element.y += CurrentMousePosition.y - LastMousePosition.y;
+		if (MouseDown) {
+			mouseDown(element);
 		} else {
-			document.body.style.cursor = 'default';
+			mouseUp(element);
 		}
 	}
-	
+
 	return {
 		dragElement: drag
 	};

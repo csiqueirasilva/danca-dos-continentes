@@ -3,7 +3,9 @@ var square = new SquareImage({
 });
 
 square.x = 30;
-square.y = 00;
+square.y = 0;
+
+square.setScale(0.25);
 
 GameON.add(square);
 

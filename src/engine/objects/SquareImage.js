@@ -41,8 +41,8 @@ SquareImage.prototype.draw = function (ctx, ndcPos, ndcSize) {
 };
 
 SquareImage.prototype.mouseMove = function (mouseX, mouseY) {
-	var localX = parseInt((mouseX - this.x) + this.w * 0.5);
-	var localY = parseInt(this.h * 0.5 - (mouseY - this.y));
+	var localX = Math.round((mouseX - this.x) + this.w * 0.5);
+	var localY = Math.round(this.h * 0.5 - (mouseY - this.y));
 	
 	var dataPos = (localX + localY * this.w) * 4 + 3;
 	
