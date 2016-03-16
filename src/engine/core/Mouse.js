@@ -78,6 +78,7 @@ function Mouse(canvas, camera, elements) {
 
 	function mouseUp(element) {
 		document.body.style.cursor = 'default';
+		MouseDown = false;
 	}
 
 	function drag(element) {

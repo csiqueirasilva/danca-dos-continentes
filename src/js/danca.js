@@ -5,7 +5,7 @@ var square = new SquareImage({
 square.x = 30;
 square.y = 0;
 
-square.setScale(0.25);
+square.setScale(1.2);
 
 //square.rotation = Math.PI;
 
