@@ -3,6 +3,7 @@ function Element () {
 	this.y = 0;
 	this.scaleW = 1;
 	this.scaleH = 1;
+	this.rotation = 0;
 	this.w = 0;
 	this.h = 0;
 	this.z = 0;
@@ -10,7 +11,7 @@ function Element () {
 	this.mouseInteract = false;
 }
 
-Element.prototype.draw = function (ctx, ndcPos, ndcSize) {
+Element.prototype.draw = function () {
 };
 
 Element.prototype.getCorners = function() {

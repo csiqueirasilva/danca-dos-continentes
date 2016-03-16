@@ -41,13 +41,41 @@ var GameON = (function () {
 		};
 	}
 
+	function setElementPosition(ndc, rotation) {
+		ctx.save();
+		ctx.translate(ndc.pos.x + ndc.size.x / 2, ndc.pos.y + ndc.size.y / 2);
+		ctx.rotate(rotation);
+	}
+
+	function drawRect(element) {
+		var ndc = getNDC(element);
+
+		setElementPosition(ndc, element.rotation);
+		
+		ctx.fillStyle = 'rgb(' + element.color.r + ', ' + element.color.g + ', ' + element.color.b + ')';
+		ctx.rect(ndc.pos.x, ndc.pos.y, ndc.size.x, ndc.size.y);
+		ctx.fill();
+		
+		ctx.restore();
+	}
+
+	function drawImage(element) {
+		var ndc = getNDC(element);
+
+		setElementPosition(ndc, element.rotation);
+
+		ctx.drawImage(element.img, -ndc.size.x / 2, -ndc.size.y / 2, ndc.size.x, ndc.size.y);
+
+		ctx.restore();
+	}
+
+
 	function drawAllElements() {
 		ctx.clearRect(0, 0, w, h);
 
 		for (var i = 0; i < elements.length; i++) {
 			if (elements[i].visible && camera.onFrame(elements[i])) {
-				var ndc = getNDC(elements[i]);
-				elements[i].draw(ctx, ndc.pos, ndc.size);
+				elements[i].draw();
 			}
 		}
 	}
@@ -66,9 +94,14 @@ var GameON = (function () {
 	}
 
 	return {
+		/* Methods */
 		add: add,
 		start: animate,
 		getNDC: getNDC,
+		drawImage: drawImage,
+		drawRect: drawRect,
+		
+		/* Components */
 		Mouse: new Mouse(mainCanvas, camera, elements)
 	};
 

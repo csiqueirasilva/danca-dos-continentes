@@ -7,6 +7,12 @@ square.y = 0;
 
 square.setScale(0.25);
 
+//square.rotation = Math.PI;
+
 GameON.add(square);
 
 GameON.start();
+
+setInterval(function() {
+	//square.rotation += 0.01;
+}, 50);
