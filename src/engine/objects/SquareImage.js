@@ -41,11 +41,18 @@ SquareImage.prototype.draw = function () {
 };
 
 SquareImage.prototype.mouseMove = function (mouseX, mouseY) {
-	var localX = parseInt((mouseX - this.x) / this.scaleW + this.w * 0.5);
-	var localY = parseInt(this.h * 0.5 - (mouseY - this.y) / this.scaleH);
+	this.isPointInside(mouseX, mouseY);
+	/*
+	var localX = (mouseX - this.x) / this.scaleW;
+	var localY = (mouseY - this.y) / this.scaleH;
 	
-	var rotateX = parseInt(localX * Math.cos(-this.rotation) - localY * Math.sin(-this.rotation));
-	var rotateY = parseInt(localY * Math.cos(-this.rotation) + localX * Math.sin(-this.rotation));
+	var rotateY = localX * Math.sin(this.rotation) + localY * Math.cos(this.rotation);
+	var rotateX = localX * Math.cos(this.rotation) - localY * Math.sin(this.rotation);
+
+	console.log(rotateX, rotateY);
+	
+	var localX = parseInt(rotateX + this.w * 0.5);
+	var localY = parseInt(this.h * 0.5 - rotateY);
 	
 	var dataPos = (localX + localY * this.w) * 4 + 3;
 	
@@ -55,6 +62,7 @@ SquareImage.prototype.mouseMove = function (mouseX, mouseY) {
 		//image has opacity at this position, interact
 		GameON.Mouse.dragElement(this);
 	} else {
-		console.log(this.data[dataPos]);
+	//	console.log(this.data[dataPos]);
 	}
+	*/
 };

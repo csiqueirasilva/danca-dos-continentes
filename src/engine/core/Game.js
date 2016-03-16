@@ -66,6 +66,12 @@ var GameON = (function () {
 
 		ctx.drawImage(element.img, -ndc.size.x / 2, -ndc.size.y / 2, ndc.size.x, ndc.size.y);
 
+		ctx.strokeStyle = '#000000';
+		ctx.beginPath();
+		ctx.rect(-ndc.size.x / 2, -ndc.size.y / 2, ndc.size.x, ndc.size.y);
+		ctx.stroke();
+		ctx.closePath();
+
 		ctx.restore();
 	}
 
