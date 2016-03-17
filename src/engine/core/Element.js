@@ -65,6 +65,8 @@ Element.prototype.setScale = function (n) {
 
 	var linha = 0;
 
+	var l = [];
+
 	Element.prototype.isPointInside = function (x, y) {
 
 		label = 0;
@@ -81,7 +83,9 @@ Element.prototype.setScale = function (n) {
 		var rotatedX1 = x;
 		var rotatedY1 = y;
 
-		var rot = this.rotation;
+		var rot = 0.01 * linha;
+
+		this.rotation = -rot;
 
 		for (var i = 0; i < corners.length; i++) {
 			var originalX = corners[i].x - this.x;
@@ -95,53 +99,65 @@ Element.prototype.setScale = function (n) {
 
 		if (linha++ === 0) {
 
-			var l = new Line({r: 255, g: 255});
+			var instanceLine = new Line({r: 255, g: 255});
+			GameON.add(instanceLine);
 
-			l.sx = corners[0].x;
-			l.sy = corners[0].y;
-			l.ex = corners[1].x;
-			l.ey = corners[1].y;
+			l.push(instanceLine);
 
-			GameON.add(l);
+			instanceLine = new Line({r: 255, g: 255});
 
-			var l = new Line({r: 255, g: 255});
+			GameON.add(instanceLine);
 
-			l.sx = corners[1].x;
-			l.sy = corners[1].y;
-			l.ex = corners[3].x;
-			l.ey = corners[3].y;
+			l.push(instanceLine);
 
-			GameON.add(l);
+			instanceLine = new Line({r: 255, g: 255});
 
-			var l = new Line({r: 255, g: 255});
+			GameON.add(instanceLine);
 
-			l.sx = corners[2].x;
-			l.sy = corners[2].y;
-			l.ex = corners[0].x;
-			l.ey = corners[0].y;
+			l.push(instanceLine);
 
-			GameON.add(l);
+			instanceLine = new Line({r: 255, g: 255});
 
-			var l = new Line({r: 255, g: 255});
+			GameON.add(instanceLine);
 
-			l.sx = corners[3].x;
-			l.sy = corners[3].y;
-			l.ex = corners[2].x;
-			l.ey = corners[2].y;
+			l.push(instanceLine);
 
-			GameON.add(l);
+			instanceLine = new Line({b: 255, g: 255});
 
-			l = new Line({b: 255, g: 255});
-
-			l.sx = rotatedX0;
-			l.sy = rotatedY0;
-			l.ex = rotatedX1;
-			l.ey = rotatedY1;
-
-			GameON.add(l);
+			GameON.add(instanceLine);
+			
+			l.push(instanceLine);
 		}
 
-		acc += intersects(corners[0].x, corners[0].y, corners[1].x, corners[1].y, rotatedX0, rotatedY0, rotatedX1, rotatedY1);
+		l[0].sx = corners[0].x;
+		l[0].sy = corners[0].y;
+		l[0].ex = corners[1].x;
+		l[0].ey = corners[1].y;
+
+
+		l[1].sx = corners[1].x;
+		l[1].sy = corners[1].y;
+		l[1].ex = corners[3].x;
+		l[1].ey = corners[3].y;
+
+		l[2].sx = corners[2].x;
+		l[2].sy = corners[2].y;
+		l[2].ex = corners[0].x;
+		l[2].ey = corners[0].y;
+
+
+		l[3].sx = corners[3].x;
+		l[3].sy = corners[3].y;
+		l[3].ex = corners[2].x;
+		l[3].ey = corners[2].y;
+		
+		
+		l[4].sx = rotatedX0;
+		l[4].sy = rotatedY0;
+		l[4].ex = rotatedX1;
+		l[4].ey = rotatedY1;
+
+		//acc += intersects(corners[0].x, corners[0].y, corners[1].x, corners[1].y, rotatedX0, rotatedY0, rotatedX1, rotatedY1);
 		//acc += intersects(corners[1].x, corners[1].y, corners[2].x, corners[2].y, rotatedX0, rotatedY0, rotatedX1, rotatedY1);
 		//acc += intersects(corners[2].x, corners[2].y, corners[3].x, corners[3].y, rotatedX0, rotatedY0, rotatedX1, rotatedY1);
 		//acc += intersects(corners[3].x, corners[3].y, corners[0].x, corners[0].y, rotatedX0, rotatedY0, rotatedX1, rotatedY1);

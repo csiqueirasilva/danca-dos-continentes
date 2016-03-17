@@ -7,7 +7,7 @@ square.y = 0;
 
 square.setScale(0.25);
 
-square.rotation = 0.2;
+square.rotation = Math.PI / 2;
 
 GameON.add(square);
 
