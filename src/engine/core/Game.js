@@ -75,6 +75,27 @@ var GameON = (function () {
 		ctx.restore();
 	}
 
+	function drawLine(element) {
+
+		var ndc = getNDC(element);
+
+		setElementPosition(ndc, element.rotation);
+		
+		var sx = (element.sx / camera.w) * mainCanvas.width;
+		var sy = -(element.sy / camera.h) * mainCanvas.height;
+
+		var ex = (element.ex / camera.w) * mainCanvas.width;
+		var ey = -(element.ey / camera.h) * mainCanvas.height;
+
+		ctx.strokeStyle = 'rgb(' + element.color.r + ', ' + element.color.g + ', ' + element.color.b + ')';
+		ctx.beginPath();
+		ctx.moveTo(sx, sy);
+		ctx.lineTo(ex, ey);
+		ctx.stroke();
+		ctx.closePath();
+
+		ctx.restore();
+	}
 
 	function drawAllElements() {
 		ctx.clearRect(0, 0, w, h);
@@ -99,6 +120,9 @@ var GameON = (function () {
 		}
 	}
 
+	var mouse = new Mouse(mainCanvas, camera, elements);
+	add(mouse.CollisionLine);
+
 	return {
 		/* Methods */
 		add: add,
@@ -106,9 +130,10 @@ var GameON = (function () {
 		getNDC: getNDC,
 		drawImage: drawImage,
 		drawRect: drawRect,
+		drawLine: drawLine,
 		
 		/* Components */
-		Mouse: new Mouse(mainCanvas, camera, elements)
+		Mouse: mouse
 	};
 
 })();

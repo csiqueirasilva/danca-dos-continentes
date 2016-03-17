@@ -23,13 +23,28 @@ function Mouse(canvas, camera, elements) {
 
 	/* Mouse over */
 	var LastTopElement = null;
+	
+	var CollisionLine = new Line();
 
 	canvas.addEventListener('mousemove', function (e) {
 		var mouseX = e.clientX / window.innerWidth - 0.5;
 		var mouseY = 0.5 - e.clientY / window.innerHeight;
 
-		mouseX += camera.x + mouseX * camera.w;
-		mouseY += camera.y + mouseY * camera.h;
+		mouseX = camera.x + mouseX * camera.w;
+		mouseY = camera.y + mouseY * camera.h;
+
+		//console.log(mouseX, mouseY);
+
+		var sx = camera.x - camera.w * 100;
+		var sy = camera.y + mouseY;
+			
+		var rot = 0.2;
+		
+		CollisionLine.sy = sx * Math.sin(rot) + sy * Math.cos(rot);
+		CollisionLine.sx = sx * Math.cos(rot) - sy * Math.sin(rot);
+			
+		CollisionLine.ex = camera.x + mouseX;
+		CollisionLine.ey = camera.y + mouseY;
 
 		CurrentMousePosition.x = mouseX;
 		CurrentMousePosition.y = mouseY;
@@ -89,6 +104,7 @@ function Mouse(canvas, camera, elements) {
 	}
 
 	return {
-		dragElement: drag
+		dragElement: drag,
+		CollisionLine: CollisionLine
 	};
 }

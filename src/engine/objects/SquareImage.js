@@ -41,7 +41,7 @@ SquareImage.prototype.draw = function () {
 };
 
 SquareImage.prototype.mouseMove = function (mouseX, mouseY) {
-	this.isPointInside(mouseX, mouseY);
+	//this.isPointInside(mouseX, mouseY);
 	/*
 	var localX = (mouseX - this.x) / this.scaleW;
 	var localY = (mouseY - this.y) / this.scaleH;
