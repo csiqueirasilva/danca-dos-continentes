@@ -81,15 +81,15 @@ var GameON = (function () {
 
 		setElementPosition(ndc, element.rotation);
 		
-		var sx = (element.sx / camera.w) * mainCanvas.width;
-		var sy = -(element.sy / camera.h) * mainCanvas.height;
+		var sx = (element.sx / camera.w) * w;
+		var sy = -(element.sy / camera.h) * h;
 
-		var ex = (element.ex / camera.w) * mainCanvas.width;
-		var ey = -(element.ey / camera.h) * mainCanvas.height;
+		var ex = (element.ex / camera.w) * w;
+		var ey = -(element.ey / camera.h) * h;
 
 		ctx.strokeStyle = 'rgb(' + element.color.r + ', ' + element.color.g + ', ' + element.color.b + ')';
 		ctx.beginPath();
-		ctx.moveTo(sx, sy);
+		ctx.moveTo(0, 0);
 		ctx.lineTo(ex, ey);
 		ctx.stroke();
 		ctx.closePath();
