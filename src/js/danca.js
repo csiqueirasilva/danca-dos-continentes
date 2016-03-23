@@ -5,9 +5,9 @@ var square = new SquareImage({
 square.x = 0;
 square.y = 0;
 
-square.setScale(1);
+square.setScale(2.5);
 
-square.rotation = Math.PI / 2;
+square.rotation = (Math.PI * 2) * Math.random();
 
 GameON.add(square);
 

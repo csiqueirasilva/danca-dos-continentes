@@ -38,11 +38,6 @@ Element.prototype.getCorners = function () {
     coords.push({x: left, y: down});
     coords.push({x: right, y: down});
 
-    if (this instanceof SquareImage) {
-        console.clear();
-        console.log(w, h);
-    }
-
     for (var i = 0; i < coords.length; i++) {
         var originalX = coords[i].x - posX;
         var originalY = coords[i].y - posY;
@@ -65,6 +60,8 @@ Element.prototype.setScale = function (n) {
 
     var label = 0;
 
+    var interLinha;
+
     function intersects(x1, y1, x2, y2, x3, y3, x4, y4) {
         // src: https://en.wikipedia.org/wiki/Line%E2%80%93line_intersection
         var denominator = (x1 - x2) * (y3 - y4) - (y1 - y2) * (x3 - x4);
@@ -77,7 +74,11 @@ Element.prototype.setScale = function (n) {
             var px = pxNumerator / denominator;
             var py = pyNumerator / denominator;
 
-            //console.log(++label, px, py, x1, y1, x2, y2);
+            console.clear();
+            console.log(px, py, x1, y1, x2, y2);
+
+            console.log(x1 + " < " + px + " < " + x2);
+            console.log(y1 + " < " + py + " < " + y2);
 
             if ((px >= x1 && px < x2 ||
                     px > x2 && px <= x1) &&
@@ -85,8 +86,14 @@ Element.prototype.setScale = function (n) {
                             py > y2 && py <= y1
                             )) {
                 ret = 1;
+                interLinha.sx = px;
+                interLinha.sy = py;
+                interLinha.visible = true;
+            } else {
+                interLinha.visible = false;
             }
         }
+
         return ret;
     }
 
@@ -110,11 +117,13 @@ Element.prototype.setScale = function (n) {
         var rotatedX1 = x;
         var rotatedY1 = y;
 
-        var rot = 0.01 * linha;
-
-        this.rotation = -rot;
-
         if (linha++ === 0) {
+
+            interLinha = new Line({g: 255});
+            GameON.add(interLinha);
+
+            interLinha.sx = interLinha.sy = 0;
+            interLinha.visible = false;
 
             var instanceLine = new Line({r: 255, g: 255});
             GameON.add(instanceLine);
@@ -174,10 +183,10 @@ Element.prototype.setScale = function (n) {
         l[4].ex = rotatedX1;
         l[4].ey = rotatedY1;
 
-        //acc += intersects(corners[0].x, corners[0].y, corners[1].x, corners[1].y, rotatedX0, rotatedY0, rotatedX1, rotatedY1);
-        //acc += intersects(corners[1].x, corners[1].y, corners[2].x, corners[2].y, rotatedX0, rotatedY0, rotatedX1, rotatedY1);
-        //acc += intersects(corners[2].x, corners[2].y, corners[3].x, corners[3].y, rotatedX0, rotatedY0, rotatedX1, rotatedY1);
-        //acc += intersects(corners[3].x, corners[3].y, corners[0].x, corners[0].y, rotatedX0, rotatedY0, rotatedX1, rotatedY1);
+        acc += intersects(corners[0].x, corners[0].y, corners[1].x, corners[1].y, rotatedX0, rotatedY0, rotatedX1, rotatedY1);
+//        acc += intersects(corners[1].x, corners[1].y, corners[2].x, corners[2].y, rotatedX0, rotatedY0, rotatedX1, rotatedY1);
+//        acc += intersects(corners[3].x, corners[3].y, corners[0].x, corners[0].y, rotatedX0, rotatedY0, rotatedX1, rotatedY1);
+//        acc += intersects(corners[2].x, corners[2].y, corners[3].x, corners[3].y, rotatedX0, rotatedY0, rotatedX1, rotatedY1);
 
         return acc % 2 ? false : true;
     };
