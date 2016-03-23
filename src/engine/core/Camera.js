@@ -2,8 +2,8 @@ function Camera (ops) {
 	ops = ops || {};
 	Element.apply(this, arguments);
 	
-	this.w = ops.w || 160;
-	this.h = ops.h || 90;
+	this.w = ops.w || 880;
+	this.h = ops.h || 495;
 }
 
 Camera.prototype = Object.create(Element.prototype);

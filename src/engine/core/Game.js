@@ -1,139 +1,158 @@
 var GameON = (function () {
 
-	// setting body style
-	document.body.style.width = '100%';
-	document.body.style.height = '100%';
-	document.body.style.padding = '0';
-	document.body.style.margin = '0';
+    // setting body style
+    document.body.style.width = '100%';
+    document.body.style.height = '100%';
+    document.body.style.padding = '0';
+    document.body.style.margin = '0';
 
-	var mainCanvas = document.createElement('canvas');
+    var mainCanvas = document.createElement('canvas');
 
-	var ctx = mainCanvas.getContext('2d');
+    var ctx = mainCanvas.getContext('2d');
 
-	var w = mainCanvas.width = window.innerWidth;
-	var h = mainCanvas.height = window.innerHeight;
+    var w = mainCanvas.width = window.innerWidth;
+    var h = mainCanvas.height = window.innerHeight;
 
-	var resizeInterval = window.setInterval(function () {
-		if (w !== window.innerWidth || h !== window.innerHeight) {
-			w = mainCanvas.width = window.innerWidth;
-			h = mainCanvas.height = window.innerHeight;
-		}
-	}, 300);
+    var camera = new Camera();
 
-	var elements = [];
+    camera.w = w;
+    camera.h = h;
 
-	var camera = new Camera();
+    var resizeInterval = window.setInterval(function () {
+        if (w !== window.innerWidth || h !== window.innerHeight) {
+            w = mainCanvas.width = window.innerWidth;
+            h = mainCanvas.height = window.innerHeight;
+            camera.w = w;
+            camera.h = h;
+        }
+    }, 300);
 
-	function getNDC(element) {
-		var ndcPos = camera.getNDCPos(element.x, element.y);
-		ndcPos.x *= w;
-		ndcPos.y *= h;
-		var ndcSize = camera.getNDCSize(element.w, element.h);
-		ndcSize.x *= w * element.scaleW;
-		ndcSize.y *= h * element.scaleH;
+    var elements = [];
 
-		ndcPos.x -= ndcSize.x / 2;
-		ndcPos.y -= ndcSize.y / 2;
+    function getNDC(element) {
+        var ndcPos = camera.getNDCPos(element.x, element.y);
+        ndcPos.x *= w;
+        ndcPos.y *= h;
+        var ndcSize = camera.getNDCSize(element.w, element.h);
+        ndcSize.x *= w * element.scaleW;
+        ndcSize.y *= h * element.scaleH;
 
-		return {
-			pos: ndcPos,
-			size: ndcSize
-		};
-	}
+        ndcPos.x -= ndcSize.x / 2;
+        ndcPos.y -= ndcSize.y / 2;
 
-	function setElementPosition(ndc, rotation) {
-		ctx.save();
-		ctx.translate(ndc.pos.x + ndc.size.x / 2, ndc.pos.y + ndc.size.y / 2);
-		ctx.rotate(rotation);
-	}
+        return {
+            pos: ndcPos,
+            size: ndcSize
+        };
+    }
 
-	function drawRect(element) {
-		var ndc = getNDC(element);
+    function setElementPosition(ndc, rotation) {
+        ctx.save();
+        ctx.translate(ndc.pos.x + ndc.size.x / 2, ndc.pos.y + ndc.size.y / 2);
+        ctx.rotate(rotation);
+    }
 
-		setElementPosition(ndc, element.rotation);
-		
-		ctx.fillStyle = 'rgb(' + element.color.r + ', ' + element.color.g + ', ' + element.color.b + ')';
-		ctx.rect(ndc.pos.x, ndc.pos.y, ndc.size.x, ndc.size.y);
-		ctx.fill();
-		
-		ctx.restore();
-	}
+    function drawRect(element) {
+        var ndc = getNDC(element);
 
-	function drawImage(element) {
-		var ndc = getNDC(element);
+        setElementPosition(ndc, element.rotation);
 
-		setElementPosition(ndc, element.rotation);
+        ctx.fillStyle = 'rgb(' + element.color.r + ', ' + element.color.g + ', ' + element.color.b + ')';
+        ctx.rect(ndc.pos.x, ndc.pos.y, ndc.size.x, ndc.size.y);
+        ctx.fill();
 
-		ctx.drawImage(element.img, -ndc.size.x / 2, -ndc.size.y / 2, ndc.size.x, ndc.size.y);
+        ctx.restore();
+    }
 
-		ctx.strokeStyle = '#000000';
-		ctx.beginPath();
-		ctx.rect(-ndc.size.x / 2, -ndc.size.y / 2, ndc.size.x, ndc.size.y);
-		ctx.stroke();
-		ctx.closePath();
+    function drawImage(element) {
+        var ndc = getNDC(element);
 
-		ctx.restore();
-	}
+        setElementPosition(ndc, element.rotation);
 
-	function drawLine(element) {
+        ctx.drawImage(element.img, -ndc.size.x / 2, -ndc.size.y / 2, ndc.size.x, ndc.size.y);
 
-		var ndc = getNDC(element);
+        ctx.strokeStyle = '#FFFFFF';
+        ctx.beginPath();
+        ctx.rect(-ndc.size.x / 2, -ndc.size.y / 2, ndc.size.x, ndc.size.y);
+        ctx.stroke();
+        ctx.closePath();
 
-		setElementPosition(ndc, element.rotation);
-		
-		var sx = (element.sx / camera.w) * w;
-		var sy = -(element.sy / camera.h) * h;
+        ctx.restore();
+    }
 
-		var ex = (element.ex / camera.w) * w;
-		var ey = -(element.ey / camera.h) * h;
+    function drawLine(element) {
 
-		ctx.strokeStyle = 'rgb(' + element.color.r + ', ' + element.color.g + ', ' + element.color.b + ')';
-		ctx.beginPath();
-		ctx.moveTo(0, 0);
-		ctx.lineTo(ex, ey);
-		ctx.stroke();
-		ctx.closePath();
+        var ndc = getNDC(element);
 
-		ctx.restore();
-	}
+        setElementPosition(ndc, element.rotation);
 
-	function drawAllElements() {
-		ctx.clearRect(0, 0, w, h);
+        var aspect = getFixedAspect();
 
-		for (var i = 0; i < elements.length; i++) {
-			if (elements[i].visible && camera.onFrame(elements[i])) {
-				elements[i].draw();
-			}
-		}
-	}
+        var sx = (element.sx / camera.w) * w;
+        var sy = -(element.sy / camera.h) * h;
 
-	function animate() {
-		requestAnimationFrame(animate);
-		drawAllElements();
-	}
+        var ex = (element.ex / camera.w) * w;
+        var ey = -(element.ey / camera.h) * h;
 
-	document.body.appendChild(mainCanvas);
+        ctx.strokeStyle = 'rgb(' + element.color.r + ', ' + element.color.g + ', ' + element.color.b + ')';
+        ctx.beginPath();
+        ctx.moveTo(sx, sy);
+        ctx.lineTo(ex, ey);
+        ctx.stroke();
+        ctx.closePath();
 
-	function add(element) {
-		if (element instanceof Element) {
-			elements.push(element);
-		}
-	}
+        ctx.restore();
+    }
 
-	var mouse = new Mouse(mainCanvas, camera, elements);
-	add(mouse.CollisionLine);
+    function drawAllElements() {
+        ctx.clearRect(0, 0, w, h);
 
-	return {
-		/* Methods */
-		add: add,
-		start: animate,
-		getNDC: getNDC,
-		drawImage: drawImage,
-		drawRect: drawRect,
-		drawLine: drawLine,
-		
-		/* Components */
-		Mouse: mouse
-	};
+        for (var i = 0; i < elements.length; i++) {
+            if (elements[i].visible && camera.onFrame(elements[i])) {
+                elements[i].draw();
+            }
+        }
+    }
+
+    function animate() {
+        requestAnimationFrame(animate);
+        drawAllElements();
+    }
+
+    document.body.appendChild(mainCanvas);
+
+    function add(element) {
+        if (element instanceof Element) {
+            elements.push(element);
+        }
+    }
+
+    var mouse = new Mouse(mainCanvas, camera, elements);
+    add(mouse.CollisionLine);
+
+    function getAspect() {
+        return camera.w / camera.h;
+    }
+
+    function getWindowSize() {
+        return {w: w, h: h};
+    }
+
+    function getFixedAspect() {
+        return {h: h / camera.h, w: camera.w / w};
+    }
+
+    return {
+        /* Methods */
+        add: add,
+        start: animate,
+        getNDC: getNDC,
+        drawImage: drawImage,
+        drawRect: drawRect,
+        drawLine: drawLine,
+        getFixedAspect: getFixedAspect,
+        /* Components */
+        Mouse: mouse
+    };
 
 })();
