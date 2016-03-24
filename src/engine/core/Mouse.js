@@ -23,7 +23,7 @@ function Mouse(canvas, camera, elements) {
 
 	/* Mouse over */
 	var LastTopElement = null;
-	
+
 	canvas.addEventListener('mousemove', function (e) {
 		var mouseX = e.clientX / window.innerWidth - 0.5;
 		var mouseY = 0.5 - e.clientY / window.innerHeight;
@@ -36,12 +36,15 @@ function Mouse(canvas, camera, elements) {
 
 		var topElement = null;
 
-		for (var i = 0; i < elements.length; i++) {
-			if (elements[i].mouseInteract) {
-				if (elements[i].visible && camera.onFrame(elements[i])) {
-					var isInsideElement = elements[i].isPointInside(mouseX, mouseY);
-					if(isInsideElement) {
-						topElement = elements[i];
+		for (var j = 0; j < elements.length; j++) {
+			var zElements = elements[j];
+			for (var i = 0; i < zElements.length; i++) {
+				if (zElements[i].mouseInteract) {
+					if (zElements[i].visible && camera.onFrame(zElements[i])) {
+						var isInsideElement = zElements[i].isPointInside(mouseX, mouseY);
+						if (isInsideElement) {
+							topElement = zElements[i];
+						}
 					}
 				}
 			}

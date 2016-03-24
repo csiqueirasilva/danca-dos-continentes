@@ -1,4 +1,4 @@
-var pecas = [
+var pieces = [
 	'AFR1',
 	'AFR2',
 	'AFR3',
@@ -14,9 +14,9 @@ var pecas = [
 	'SA3'
 ];
 
-for(var i = 0; i < pecas.length; i++) {
-	var square = new SquareImage({
-		imgPath: 'imgs/futuro/pecas-futuro/' + pecas[i] + '.png'
+for(var i = 0; i < pieces.length; i++) {
+	var square = new Piece({
+		imgPath: 'imgs/futuro/pecas-futuro/' + pieces[i] + '.png'
 	});
 	
 	square.x = (Math.random() * 0.8 - 0.4) * GameON.Camera.w;

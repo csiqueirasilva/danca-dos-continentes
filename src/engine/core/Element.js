@@ -56,6 +56,12 @@ Element.prototype.setScale = function (n) {
 	this.scaleH = this.scaleW = parseFloat(n);
 };
 
+Element.prototype.setZIndex = function(z) {
+	if(!GameON.moveRenderOrder(this, z)) {
+		this.z = z;
+	}
+};
+
 (function () {
 
 	function intersects(x1, y1, x2, y2, x3, y3, x4, y4) {

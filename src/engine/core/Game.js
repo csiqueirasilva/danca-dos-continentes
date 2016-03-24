@@ -109,9 +109,12 @@ var GameON = (function () {
 	function drawAllElements() {
 		ctx.clearRect(0, 0, w, h);
 
-		for (var i = 0; i < elements.length; i++) {
-			if (elements[i].visible && camera.onFrame(elements[i])) {
-				elements[i].draw();
+		for (var j = 0; j < elements.length; j++) {
+			var zElements = elements[j];
+			for (var i = 0; i < zElements.length; i++) {
+				if (zElements[i].visible && camera.onFrame(zElements[i])) {
+					zElements[i].draw();
+				}
 			}
 		}
 	}
@@ -123,10 +126,36 @@ var GameON = (function () {
 
 	document.body.appendChild(mainCanvas);
 
+	function remove(element) {
+		var added = onScene(element);
+		if (added) {
+			var idx = elements[element.z].indexOf(element);
+			elements[element.z].splice(idx, 1);
+		}
+		return added;
+	}
+
 	function add(element) {
 		if (element instanceof Element) {
-			elements.push(element);
+			if (!(elements[element.z] instanceof Array)) {
+				elements[element.z] = [];
+			}
+			elements[element.z].push(element);
 		}
+	}
+
+	function onScene(element) {
+		return element instanceof Element && elements[element.z] instanceof Array && elements[element.z].indexOf(element) !== -1;
+	}
+
+	function moveRenderOrder(element, z) {
+		var added = onScene(element);
+		if(added) {
+			remove(element);
+			element.z = z;
+			add(element);
+		}
+		return added;
 	}
 
 	var mouse = new Mouse(mainCanvas, camera, elements);
@@ -135,11 +164,14 @@ var GameON = (function () {
 	return {
 		/* Methods */
 		add: add,
+		remove: remove,
 		start: animate,
 		getNDC: getNDC,
 		drawImage: drawImage,
 		drawRect: drawRect,
 		drawLine: drawLine,
+		onScene: onScene,
+		moveRenderOrder: moveRenderOrder,
 		/* Components */
 		Mouse: mouse,
 		Camera: camera
