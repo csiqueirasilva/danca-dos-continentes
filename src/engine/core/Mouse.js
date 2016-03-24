@@ -115,6 +115,7 @@ function Mouse(canvas, camera, elements) {
 	// methods
 
 	var eventInterval = setInterval(function () {
+		
 		if (LastTopElement !== null) {
 
 			if (LastTopElement.draggable) {
@@ -124,10 +125,11 @@ function Mouse(canvas, camera, elements) {
 			if (LastTopElement.rotatable) {
 				rotate(LastTopElement);
 			}
-
-			LastMousePosition.x = CurrentMousePosition.x;
-			LastMousePosition.y = CurrentMousePosition.y;
 		}
+
+		LastMousePosition.x = CurrentMousePosition.x;
+		LastMousePosition.y = CurrentMousePosition.y;
+		
 	}, 2);
 
 	function dragMouseDown(element) {
@@ -143,8 +145,8 @@ function Mouse(canvas, camera, elements) {
 
 	function rotate(element) {
 		var speed = element.rotateSpeed;
-		
-		if(RightMouseDown) {
+
+		if (RightMouseDown) {
 			element.rotation += speed;
 		} else if (MiddleMouseDown) {
 			element.rotation += speed * -1;
