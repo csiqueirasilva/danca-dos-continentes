@@ -52,3 +52,7 @@ SquareImage.prototype.inVisiblePixel = function (mouseX, mouseY) {
 	
 	return this.data[dataPos] !== 0;
 };
+
+SquareImage.prototype.isPointInside = function (x, y) {
+	return Object.getPrototypeOf(Square.prototype).isPointInside.call(this, x, y) && this.inVisiblePixel(x, y);
+};

@@ -1,6 +1,6 @@
 var GameON = (function () {
 
-	var DEBUG_MODE = false;
+	var DEBUG_MODE = true;
 
 	// setting body style
 	document.body.style.width = '100%';
