@@ -104,7 +104,7 @@ Element.prototype.setScale = function (n) {
         acc += intersects(corners[3].x, corners[3].y, corners[0].x, corners[0].y, rotatedX0, rotatedY0, rotatedX1, rotatedY1);
         acc += intersects(corners[2].x, corners[2].y, corners[3].x, corners[3].y, rotatedX0, rotatedY0, rotatedX1, rotatedY1);
 
-		return acc % 2 ? false : true;
+		return acc % 2 === 0 ? false : true;
 	};
 
 })();

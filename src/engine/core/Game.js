@@ -1,158 +1,148 @@
 var GameON = (function () {
 
-    // setting body style
-    document.body.style.width = '100%';
-    document.body.style.height = '100%';
-    document.body.style.padding = '0';
-    document.body.style.margin = '0';
+	var DEBUG_MODE = false;
 
-    var mainCanvas = document.createElement('canvas');
+	// setting body style
+	document.body.style.width = '100%';
+	document.body.style.height = '100%';
+	document.body.style.padding = '0';
+	document.body.style.margin = '0';
 
-    var ctx = mainCanvas.getContext('2d');
+	var mainCanvas = document.createElement('canvas');
 
-    var w = mainCanvas.width = window.innerWidth;
-    var h = mainCanvas.height = window.innerHeight;
+	var ctx = mainCanvas.getContext('2d');
 
-    var camera = new Camera();
+	var w = mainCanvas.width = window.innerWidth;
+	var h = mainCanvas.height = window.innerHeight;
 
-    camera.w = w;
-    camera.h = h;
+	var camera = new Camera();
 
-    var resizeInterval = window.setInterval(function () {
-        if (w !== window.innerWidth || h !== window.innerHeight) {
-            w = mainCanvas.width = window.innerWidth;
-            h = mainCanvas.height = window.innerHeight;
-            camera.w = w;
-            camera.h = h;
-        }
-    }, 300);
+	camera.w = w;
+	camera.h = h;
 
-    var elements = [];
+	var resizeInterval = window.setInterval(function () {
+		if (w !== window.innerWidth || h !== window.innerHeight) {
+			w = mainCanvas.width = window.innerWidth;
+			h = mainCanvas.height = window.innerHeight;
+			camera.w = w;
+			camera.h = h;
+		}
+	}, 300);
 
-    function getNDC(element) {
-        var ndcPos = camera.getNDCPos(element.x, element.y);
-        ndcPos.x *= w;
-        ndcPos.y *= h;
-        var ndcSize = camera.getNDCSize(element.w, element.h);
-        ndcSize.x *= w * element.scaleW;
-        ndcSize.y *= h * element.scaleH;
+	var elements = [];
 
-        ndcPos.x -= ndcSize.x / 2;
-        ndcPos.y -= ndcSize.y / 2;
+	function getNDC(element) {
+		var ndcPos = camera.getNDCPos(element.x, element.y);
+		ndcPos.x *= w;
+		ndcPos.y *= h;
+		var ndcSize = camera.getNDCSize(element.w, element.h);
+		ndcSize.x *= w * element.scaleW;
+		ndcSize.y *= h * element.scaleH;
 
-        return {
-            pos: ndcPos,
-            size: ndcSize
-        };
-    }
+		ndcPos.x -= ndcSize.x / 2;
+		ndcPos.y -= ndcSize.y / 2;
 
-    function setElementPosition(ndc, rotation) {
-        ctx.save();
-        ctx.translate(ndc.pos.x + ndc.size.x / 2, ndc.pos.y + ndc.size.y / 2);
-        ctx.rotate(rotation);
-    }
+		return {
+			pos: ndcPos,
+			size: ndcSize
+		};
+	}
 
-    function drawRect(element) {
-        var ndc = getNDC(element);
+	function setElementPosition(ndc, rotation) {
+		ctx.save();
+		ctx.translate(ndc.pos.x + ndc.size.x / 2, ndc.pos.y + ndc.size.y / 2);
+		ctx.rotate(rotation);
+	}
 
-        setElementPosition(ndc, element.rotation);
+	function drawRect(element) {
+		var ndc = getNDC(element);
 
-        ctx.fillStyle = 'rgb(' + element.color.r + ', ' + element.color.g + ', ' + element.color.b + ')';
-        ctx.rect(ndc.pos.x, ndc.pos.y, ndc.size.x, ndc.size.y);
-        ctx.fill();
+		setElementPosition(ndc, element.rotation);
 
-        ctx.restore();
-    }
+		ctx.fillStyle = 'rgb(' + element.color.r + ', ' + element.color.g + ', ' + element.color.b + ')';
+		ctx.rect(ndc.pos.x, ndc.pos.y, ndc.size.x, ndc.size.y);
+		ctx.fill();
 
-    function drawImage(element) {
-        var ndc = getNDC(element);
+		ctx.restore();
+	}
 
-        setElementPosition(ndc, element.rotation);
+	function drawImage(element) {
+		var ndc = getNDC(element);
 
-        ctx.drawImage(element.img, -ndc.size.x / 2, -ndc.size.y / 2, ndc.size.x, ndc.size.y);
+		setElementPosition(ndc, element.rotation);
 
-        ctx.strokeStyle = '#FFFFFF';
-        ctx.beginPath();
-        ctx.rect(-ndc.size.x / 2, -ndc.size.y / 2, ndc.size.x, ndc.size.y);
-        ctx.stroke();
-        ctx.closePath();
+		ctx.drawImage(element.img, -ndc.size.x / 2, -ndc.size.y / 2, ndc.size.x, ndc.size.y);
 
-        ctx.restore();
-    }
+		if (DEBUG_MODE) {
+			ctx.strokeStyle = '#FFFFFF';
+			ctx.beginPath();
+			ctx.rect(-ndc.size.x / 2, -ndc.size.y / 2, ndc.size.x, ndc.size.y);
+			ctx.stroke();
+			ctx.closePath();
+		}
 
-    function drawLine(element) {
+		ctx.restore();
+	}
 
-        var ndc = getNDC(element);
+	function drawLine(element) {
 
-        setElementPosition(ndc, element.rotation);
+		var ndc = getNDC(element);
 
-        var aspect = getFixedAspect();
+		setElementPosition(ndc, element.rotation);
 
-        var sx = (element.sx / camera.w) * w;
-        var sy = -(element.sy / camera.h) * h;
+		var sx = (element.sx / camera.w) * w;
+		var sy = -(element.sy / camera.h) * h;
 
-        var ex = (element.ex / camera.w) * w;
-        var ey = -(element.ey / camera.h) * h;
+		var ex = (element.ex / camera.w) * w;
+		var ey = -(element.ey / camera.h) * h;
 
-        ctx.strokeStyle = 'rgb(' + element.color.r + ', ' + element.color.g + ', ' + element.color.b + ')';
-        ctx.beginPath();
-        ctx.moveTo(sx, sy);
-        ctx.lineTo(ex, ey);
-        ctx.stroke();
-        ctx.closePath();
+		ctx.strokeStyle = 'rgb(' + element.color.r + ', ' + element.color.g + ', ' + element.color.b + ')';
+		ctx.beginPath();
+		ctx.moveTo(sx, sy);
+		ctx.lineTo(ex, ey);
+		ctx.stroke();
+		ctx.closePath();
 
-        ctx.restore();
-    }
+		ctx.restore();
+	}
 
-    function drawAllElements() {
-        ctx.clearRect(0, 0, w, h);
+	function drawAllElements() {
+		ctx.clearRect(0, 0, w, h);
 
-        for (var i = 0; i < elements.length; i++) {
-            if (elements[i].visible && camera.onFrame(elements[i])) {
-                elements[i].draw();
-            }
-        }
-    }
+		for (var i = 0; i < elements.length; i++) {
+			if (elements[i].visible && camera.onFrame(elements[i])) {
+				elements[i].draw();
+			}
+		}
+	}
 
-    function animate() {
-        requestAnimationFrame(animate);
-        drawAllElements();
-    }
+	function animate() {
+		requestAnimationFrame(animate);
+		drawAllElements();
+	}
 
-    document.body.appendChild(mainCanvas);
+	document.body.appendChild(mainCanvas);
 
-    function add(element) {
-        if (element instanceof Element) {
-            elements.push(element);
-        }
-    }
+	function add(element) {
+		if (element instanceof Element) {
+			elements.push(element);
+		}
+	}
 
-    var mouse = new Mouse(mainCanvas, camera, elements);
-    add(mouse.CollisionLine);
+	var mouse = new Mouse(mainCanvas, camera, elements);
+	add(mouse.CollisionLine);
 
-    function getAspect() {
-        return camera.w / camera.h;
-    }
-
-    function getWindowSize() {
-        return {w: w, h: h};
-    }
-
-    function getFixedAspect() {
-        return {h: h / camera.h, w: camera.w / w};
-    }
-
-    return {
-        /* Methods */
-        add: add,
-        start: animate,
-        getNDC: getNDC,
-        drawImage: drawImage,
-        drawRect: drawRect,
-        drawLine: drawLine,
-        getFixedAspect: getFixedAspect,
-        /* Components */
-        Mouse: mouse
-    };
+	return {
+		/* Methods */
+		add: add,
+		start: animate,
+		getNDC: getNDC,
+		drawImage: drawImage,
+		drawRect: drawRect,
+		drawLine: drawLine,
+		/* Components */
+		Mouse: mouse,
+		Camera: camera
+	};
 
 })();

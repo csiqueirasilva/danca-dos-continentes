@@ -39,7 +39,8 @@ function Mouse(canvas, camera, elements) {
 		for (var i = 0; i < elements.length; i++) {
 			if (elements[i].mouseInteract) {
 				if (elements[i].visible && camera.onFrame(elements[i])) {
-					if(elements[i].isPointInside(mouseX, mouseY)) {
+					var isInsideElement = elements[i].isPointInside(mouseX, mouseY);
+					if(isInsideElement) {
 						topElement = elements[i];
 					}
 				}
