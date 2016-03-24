@@ -38,8 +38,7 @@ SquareImage.prototype.draw = function () {
 	}
 };
 
-SquareImage.prototype.mouseMove = function (mouseX, mouseY) {
-
+SquareImage.prototype.inVisiblePixel = function (mouseX, mouseY) {
 	var localX = (mouseX - this.x) / this.scaleW;
 	var localY = (mouseY - this.y) / this.scaleH;
 	
@@ -51,9 +50,5 @@ SquareImage.prototype.mouseMove = function (mouseX, mouseY) {
 	
 	var dataPos = (localX + localY * this.w) * 4 + 3;
 	
-	if(this.data[dataPos] !== 0) {
-		//image has opacity at this position, interact
-		GameON.Mouse.dragElement(this);
-	}
-	
+	return this.data[dataPos] !== 0;
 };

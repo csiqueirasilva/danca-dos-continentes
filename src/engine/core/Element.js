@@ -9,6 +9,9 @@ function Element() {
 	this.z = 0;
 	this.visible = true;
 	this.mouseInteract = false;
+	this.draggable = false;
+	this.rotatable = false;
+	this.rotateSpeed = 0.1;
 }
 
 Element.prototype.draw = function () {

@@ -11,18 +11,63 @@ function Mouse(canvas, camera, elements) {
 		y: 0
 	};
 
-	var MouseDown = false;
+	var LastTopElement = null;
+
+	/* Mouse up and down */
+
+	var MOUSE_BTN = {
+		LEFT: 0,
+		MIDDLE: 1,
+		RIGHT: 2
+	};
+
+	var LeftMouseDown = false;
+	var MiddleMouseDown = false;
+	var RightMouseDown = false;
+
+	canvas.addEventListener('wheel', function (e) {
+		var direction = (e.detail < 0 || e.wheelDelta > 0) ? 1 : -1;
+
+		if (LastTopElement && LastTopElement.mouseWheel instanceof Function) {
+			LastTopElement.mouseWheel(CurrentMousePosition.x, CurrentMousePosition.y, direction, e);
+		}
+	});
 
 	canvas.addEventListener('mousedown', function (e) {
-		MouseDown = true;
+		switch (e.button) {
+			case MOUSE_BTN.LEFT:
+				LeftMouseDown = true;
+				break;
+			case MOUSE_BTN.MIDDLE:
+				MiddleMouseDown = true;
+				break;
+			case MOUSE_BTN.RIGHT:
+				RightMouseDown = true;
+		}
+
+		if (LastTopElement && LastTopElement.mouseDown instanceof Function) {
+			LastTopElement.mouseDown(CurrentMousePosition.x, CurrentMousePosition.y, e);
+		}
 	});
 
 	canvas.addEventListener('mouseup', function (e) {
-		MouseDown = false;
+		switch (e.button) {
+			case MOUSE_BTN.LEFT:
+				LeftMouseDown = false;
+				break;
+			case MOUSE_BTN.MIDDLE:
+				MiddleMouseDown = false;
+				break;
+			case MOUSE_BTN.RIGHT:
+				RightMouseDown = false;
+		}
+
+		if (LastTopElement && LastTopElement.mouseUp instanceof Function) {
+			LastTopElement.mouseUp(e);
+		}
 	});
 
 	/* Mouse over */
-	var LastTopElement = null;
 
 	canvas.addEventListener('mousemove', function (e) {
 		var mouseX = e.clientX / window.innerWidth - 0.5;
@@ -57,7 +102,6 @@ function Mouse(canvas, camera, elements) {
 		if (topElement !== LastTopElement) {
 			if (LastTopElement !== null && LastTopElement.mouseOut instanceof Function) {
 				LastTopElement.mouseOut();
-				mouseUp();
 			}
 
 			LastTopElement = topElement;
@@ -66,33 +110,56 @@ function Mouse(canvas, camera, elements) {
 				LastTopElement.mouseOver();
 			}
 		}
-
-		LastMousePosition.x = CurrentMousePosition.x;
-		LastMousePosition.y = CurrentMousePosition.y;
 	});
 
 	// methods
 
-	function mouseDown(element) {
+	var eventInterval = setInterval(function () {
+		if (LastTopElement !== null) {
+
+			if (LastTopElement.draggable) {
+				drag(LastTopElement);
+			}
+
+			if (LastTopElement.rotatable) {
+				rotate(LastTopElement);
+			}
+
+			LastMousePosition.x = CurrentMousePosition.x;
+			LastMousePosition.y = CurrentMousePosition.y;
+		}
+	}, 2);
+
+	function dragMouseDown(element) {
 		document.body.style.cursor = 'move';
 		element.x += CurrentMousePosition.x - LastMousePosition.x;
 		element.y += CurrentMousePosition.y - LastMousePosition.y;
 	}
 
-	function mouseUp(element) {
+	function dragMouseUp(element) {
 		document.body.style.cursor = 'default';
-		MouseDown = false;
+		LeftMouseDown = false;
+	}
+
+	function rotate(element) {
+		var speed = element.rotateSpeed;
+		
+		if(RightMouseDown) {
+			element.rotation += speed;
+		} else if (MiddleMouseDown) {
+			element.rotation += speed * -1;
+		}
 	}
 
 	function drag(element) {
-		if (MouseDown) {
-			mouseDown(element);
+		if (LeftMouseDown) {
+			dragMouseDown(element);
 		} else {
-			mouseUp(element);
+			dragMouseUp(element);
 		}
 	}
 
 	return {
-		dragElement: drag
+		MOUSE_BTN: MOUSE_BTN
 	};
 }
