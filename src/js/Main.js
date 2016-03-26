@@ -22,7 +22,7 @@ var mapNames = {
 };
 
 var pieceWrapper = new Element();
-pieceWrapper.visible = true;
+pieceWrapper.visible = false;
 pieceWrapper.z = 10;
 GameON.add(pieceWrapper);
 
@@ -41,6 +41,9 @@ for(var i = 0; i < pieceNames.length; i++) {
 	pieceWrapper.add(square);
 }
 
+var mainMenuWrapper = new Element();
+GameON.add(mainMenuWrapper);
+
 var mainTitle = new DisplayText({
 	txt: "Dança dos Continentes"
 });
@@ -49,7 +52,7 @@ mainTitle.setSize(5);
 
 mainTitle.setPosition(0, 42.5);
 
-GameON.add(mainTitle);
+mainMenuWrapper.add(mainTitle);
 
 var idx = 0;
 var mapOptionStart = 20;
@@ -67,10 +70,11 @@ for(var key in mapNames) {
 	idx += 1.5;
 	
 	link.clickCallback = function () {
-		
+		pieceWrapper.visible = true;
+		mainMenuWrapper.visible = false;
 	};
 	
-	GameON.add(link);
+	mainMenuWrapper.add(link);
 }
 
 GameON.start();

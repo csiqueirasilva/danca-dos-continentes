@@ -76,17 +76,22 @@ function Mouse(canvas, camera, elements) {
 		for (var key in collection) {
 			var zElements = collection[key];
 			for (var i = 0; i < zElements.length; i++) {
-				if (zElements[i].mouseInteract) {
-					if (zElements[i].visible && camera.onFrame(zElements[i])) {
+				if (zElements[i].visible && camera.onFrame(zElements[i])) {
+
+					if (zElements[i].mouseInteract) {
+
 						var isInsideElement = zElements[i].isPointInside(mouseX, mouseY);
 						if (isInsideElement) {
 							topElement = zElements[i];
 						}
 					}
-				}
-				var childTopElement = checkTopElement(zElements[i]._children, mouseX, mouseY);
-				if(childTopElement !== null) {
-					topElement = childTopElement;
+
+					var childTopElement = checkTopElement(zElements[i]._children, mouseX, mouseY);
+
+					if (childTopElement !== null) {
+						topElement = childTopElement;
+					}
+
 				}
 			}
 		}
