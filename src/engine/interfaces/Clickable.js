@@ -21,3 +21,7 @@ Clickable.prototype.mouseOver = function() {
 Clickable.prototype.mouseOut = function() {
 	document.body.style.cursor = 'default';
 };
+
+Clickable.prototype.isDown = function() {
+	return this._clickable_down;
+};
