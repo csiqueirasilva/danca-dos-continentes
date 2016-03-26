@@ -34,7 +34,7 @@ SquareImage.prototype = Object.create(Square.prototype);
 
 SquareImage.prototype.draw = function () {
 	if(this.ready) {
-		GameON.drawImage(this);
+		GameON.Canvas.drawImage(this);
 	}
 };
 

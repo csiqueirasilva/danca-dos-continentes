@@ -2,42 +2,65 @@ var GameON = (function () {
 
 	var DEBUG_MODE = true;
 
-	// setting body style
-	document.body.style.width = '100%';
-	document.body.style.height = '100%';
-	document.body.style.padding = '0';
-	document.body.style.margin = '0';
+	function Game(ops) {
+		ops = ops || {};
+		Element.apply(this, arguments);
 
-	var mainCanvas = document.createElement('canvas');
+		this.Canvas = new CanvasInterfaceImpl();
 
-	var ctx = mainCanvas.getContext('2d');
+		this.Camera = new Camera();
 
-	var w = mainCanvas.width = window.innerWidth;
-	var h = mainCanvas.height = window.innerHeight;
+		this.Camera.w = this.Canvas.w;
+		this.Camera.h = this.Canvas.h;
 
-	var camera = new Camera();
+		this.Mouse = new Mouse(this.Canvas.mainCanvas, this.Camera, this._children);
+		this.add(this.Mouse.CollisionLine);
 
-	camera.w = w;
-	camera.h = h;
+		this.DEBUG_MODE = DEBUG_MODE;
+	}
 
-	var resizeInterval = window.setInterval(function () {
-		if (w !== window.innerWidth || h !== window.innerHeight) {
-			w = mainCanvas.width = window.innerWidth;
-			h = mainCanvas.height = window.innerHeight;
-			camera.w = w;
-			camera.h = h;
+	Game.prototype = Object.create(Element.prototype);
+
+	Game.prototype.moveRenderOrder = function (element, z) {
+		var added = this.isChild(element);
+		if (added) {
+			this.remove(element);
+			element.z = z;
+			this.add(element);
 		}
-	}, 300);
+		return added;
+	};
 
-	var elements = [];
+	Game.prototype.start = function () {
 
-	function getNDC(element) {
-		var ndcPos = camera.getNDCPos(element.x, element.y);
-		ndcPos.x *= w;
-		ndcPos.y *= h;
-		var ndcSize = camera.getNDCSize(element.w, element.h);
-		ndcSize.x *= w * element.scaleW;
-		ndcSize.y *= h * element.scaleH;
+		function animate() {
+			requestAnimationFrame(animate);
+			GameON.Canvas.clear();
+			GameON.drawElementCollection(GameON._children);
+		}
+
+		animate();
+	};
+
+	Game.prototype.drawElementCollection = function (elementCollection) {
+		for (var j = 0; j < elementCollection.length; j++) {
+			var zElements = elementCollection[j];
+			for (var i = 0; i < zElements.length; i++) {
+				if (zElements[i].visible && this.Camera.onFrame(zElements[i])) {
+					zElements[i].draw();
+					this.drawElementCollection(zElements[i]._children);
+				}
+			}
+		}
+	};
+
+	Game.prototype.getNDC = function (element) {
+		var ndcPos = this.Camera.getNDCPos(element.x, element.y);
+		ndcPos.x *= this.Canvas.w;
+		ndcPos.y *= this.Canvas.h;
+		var ndcSize = this.Camera.getNDCSize(element.w, element.h);
+		ndcSize.x *= this.Canvas.w * element.scaleW;
+		ndcSize.y *= this.Canvas.h * element.scaleH;
 
 		ndcPos.x -= ndcSize.x / 2;
 		ndcPos.y -= ndcSize.y / 2;
@@ -46,162 +69,17 @@ var GameON = (function () {
 			pos: ndcPos,
 			size: ndcSize
 		};
-	}
-
-	function setElementPosition(ndc, rotation) {
-		ctx.save();
-		ctx.translate(ndc.pos.x + ndc.size.x / 2, ndc.pos.y + ndc.size.y / 2);
-		ctx.rotate(rotation);
-	}
-
-	function drawRect(element) {
-		var ndc = getNDC(element);
-
-		setElementPosition(ndc, element.rotation);
-
-		ctx.fillStyle = 'rgb(' + element.color.r + ', ' + element.color.g + ', ' + element.color.b + ')';
-		ctx.rect(-ndc.size.x / 2, -ndc.size.y / 2, ndc.size.x, ndc.size.y);
-		ctx.fill();
-
-		ctx.restore();
-	}
-
-	function drawBoundingRect(ndc) {
-		ctx.strokeStyle = '#FFFFFF';
-		ctx.strokeRect(-ndc.size.x / 2, -ndc.size.y / 2, ndc.size.x, ndc.size.y);
-	}
-
-	function drawText(element) {
-		
-		var fontSize = ((element.h / camera.h) * element.scaleH) * h;
-		
-		ctx.font = fontSize + "px " + (element.font || "Arial");
-		
-		var width = ctx.measureText(element.txt).width;
-		
-		element.w = (width / w) * camera.w;
-		
-		var ndc = getNDC(element);
-
-		setElementPosition(ndc, element.rotation);
-
-		ctx.fillStyle = 'rgb(' + element.color.r + ', ' + element.color.g + ', ' + element.color.b + ')';
-		ctx.textBaseline = 'top';
-		ctx.fillText(element.txt, -ndc.size.x / 2, -ndc.size.y / 2);
-
-		if (DEBUG_MODE) {
-			drawBoundingRect(ndc);
-		}
-
-		ctx.restore();
-	}
-
-	function drawImage(element) {
-		var ndc = getNDC(element);
-
-		setElementPosition(ndc, element.rotation);
-
-		ctx.drawImage(element.img, -ndc.size.x / 2, -ndc.size.y / 2, ndc.size.x, ndc.size.y);
-
-		if (DEBUG_MODE) {
-			drawBoundingRect(ndc);
-		}
-
-		ctx.restore();
-	}
-
-	function drawLine(element) {
-
-		var ndc = getNDC(element);
-
-		setElementPosition(ndc, element.rotation);
-
-		var sx = (element.sx / camera.w) * w;
-		var sy = -(element.sy / camera.h) * h;
-
-		var ex = (element.ex / camera.w) * w;
-		var ey = -(element.ey / camera.h) * h;
-
-		ctx.strokeStyle = 'rgb(' + element.color.r + ', ' + element.color.g + ', ' + element.color.b + ')';
-		ctx.beginPath();
-		ctx.moveTo(sx, sy);
-		ctx.lineTo(ex, ey);
-		ctx.stroke();
-		ctx.closePath();
-
-		ctx.restore();
-	}
-
-	function drawAllElements() {
-		ctx.clearRect(0, 0, w, h);
-
-		for (var j = 0; j < elements.length; j++) {
-			var zElements = elements[j];
-			for (var i = 0; i < zElements.length; i++) {
-				if (zElements[i].visible && camera.onFrame(zElements[i])) {
-					zElements[i].draw();
-				}
-			}
-		}
-	}
-
-	function animate() {
-		requestAnimationFrame(animate);
-		drawAllElements();
-	}
-
-	document.body.appendChild(mainCanvas);
-
-	function remove(element) {
-		var added = onScene(element);
-		if (added) {
-			var idx = elements[element.z].indexOf(element);
-			elements[element.z].splice(idx, 1);
-		}
-		return added;
-	}
-
-	function add(element) {
-		if (element instanceof Element) {
-			if (!(elements[element.z] instanceof Array)) {
-				elements[element.z] = [];
-			}
-			elements[element.z].push(element);
-		}
-	}
-
-	function onScene(element) {
-		return element instanceof Element && elements[element.z] instanceof Array && elements[element.z].indexOf(element) !== -1;
-	}
-
-	function moveRenderOrder(element, z) {
-		var added = onScene(element);
-		if (added) {
-			remove(element);
-			element.z = z;
-			add(element);
-		}
-		return added;
-	}
-
-	var mouse = new Mouse(mainCanvas, camera, elements);
-	add(mouse.CollisionLine);
-
-	return {
-		/* Methods */
-		add: add,
-		remove: remove,
-		start: animate,
-		getNDC: getNDC,
-		drawImage: drawImage,
-		drawRect: drawRect,
-		drawLine: drawLine,
-		drawText: drawText,
-		onScene: onScene,
-		moveRenderOrder: moveRenderOrder,
-		/* Components */
-		Mouse: mouse,
-		Camera: camera
 	};
+
+	var GameInstance = new Game();
+
+	var resizeInterval = window.setInterval(function () {
+		if (GameInstance.Canvas.w !== window.innerWidth || GameInstance.Canvas.h !== window.innerHeight) {
+			GameInstance.Camera.w = GameInstance.Canvas.w = GameInstance.Canvas.mainCanvas.width = window.innerWidth;
+			GameInstance.Camera.h = GameInstance.Canvas.h = GameInstance.Canvas.mainCanvas.height = window.innerHeight;
+		}
+	}, 300);
+
+	return GameInstance;
 
 })();

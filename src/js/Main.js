@@ -14,7 +14,16 @@ var pieceNames = [
 	'SA3'
 ];
 
-var pieces = [];
+var mapNames = {
+	'futuro': 'Futuro',
+	'atual': 'Atual',
+	'pangeia': 'Pangeia',
+	'rodinia': 'Rodínia'
+};
+
+var pieceWrapper = new Element();
+pieceWrapper.visible = false;
+GameON.add(pieceWrapper);
 
 for(var i = 0; i < pieceNames.length; i++) {
 	var square = new Piece({
@@ -27,15 +36,11 @@ for(var i = 0; i < pieceNames.length; i++) {
 	square.setScale(2.5);
 	
 	square.rotation = (Math.PI * 2) * Math.random();
-
-	square.visible = false;
 	
-	pieces.push(square);
-	
-	//GameON.add(square);
+	pieceWrapper.add(square);
 }
 
-var mainTitle = new ClickableText({
+var mainTitle = new DisplayText({
 	txt: "Dança dos Continentes"
 });
 
@@ -44,5 +49,27 @@ mainTitle.setSize(5);
 mainTitle.setPosition(0, 42.5);
 
 GameON.add(mainTitle);
+
+var idx = 0;
+var mapOptionStart = 20;
+var mapOptionSize = 5;
+	
+for(var key in mapNames) {
+	var link = new ClickableText({
+		txt: mapNames[key]
+	});
+
+	link.setSize(mapOptionSize);
+
+	link.setPosition(0, mapOptionStart + idx * -mapOptionSize);
+	
+	idx += 1.5;
+	
+	link.clickCallback = function () {
+		
+	};
+	
+	GameON.add(link);
+}
 
 GameON.start();

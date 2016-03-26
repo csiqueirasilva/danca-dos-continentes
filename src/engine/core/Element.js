@@ -12,7 +12,30 @@ function Element() {
 	this.draggable = false;
 	this.rotatable = false;
 	this.rotateSpeed = 0.1;
+	this._children = [];
 }
+
+Element.prototype.remove = function (element) {
+	var added = onScene(element);
+	if (added) {
+		var idx = this._children[element.z].indexOf(element);
+		this._children[element.z].splice(idx, 1);
+	}
+	return added;
+};
+
+Element.prototype.add = function (element) {
+	if (element instanceof Element) {
+		if (!(this._children[element.z] instanceof Array)) {
+			this._children[element.z] = [];
+		}
+		this._children[element.z].push(element);
+	}
+};
+
+Element.prototype.isChild = function (element) {
+	return element instanceof Element && this._children[element.z] instanceof Array && this._children[element.z].indexOf(element) !== -1;
+};
 
 Element.prototype.draw = function () {
 };
@@ -119,9 +142,9 @@ Element.prototype.setZIndex = function (z) {
 			acc += intersects(corners[2].x, corners[2].y, corners[3].x, corners[3].y, rotatedX0, rotatedY0, rotatedX1, rotatedY1);
 
 			ret = acc % 2 !== 0;
-			
+
 		} else {
-			ret = x >= corners[1].x && 
+			ret = x >= corners[1].x &&
 				x <= corners[0].x &&
 				y <= corners[0].y &&
 				y >= corners[2].y;

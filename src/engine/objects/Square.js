@@ -14,7 +14,7 @@ function Square (ops) {
 Square.prototype = Object.create(Element.prototype);
 
 Square.prototype.draw = function () {
-	GameON.drawRect(this);
+	GameON.Canvas.drawRect(this);
 };
 
 Square.prototype.mouseOver = function () {

@@ -25,5 +25,5 @@ DisplayText.prototype.setPosition = function (x, y) {
 };
 
 DisplayText.prototype.draw = function () {
-	GameON.drawText(this);
+	GameON.Canvas.drawText(this);
 };

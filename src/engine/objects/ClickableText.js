@@ -7,5 +7,7 @@ function ClickableText (ops) {
 
 ClickableText.prototype = Object.create(DisplayText.prototype);
 
+ClickableText.prototype.mouseUp = Clickable.prototype.mouseUp;
+ClickableText.prototype.mouseDown = Clickable.prototype.mouseDown;
 ClickableText.prototype.mouseOver = Clickable.prototype.mouseOver;
 ClickableText.prototype.mouseOut = Clickable.prototype.mouseOut;
