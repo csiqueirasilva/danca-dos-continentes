@@ -73,8 +73,8 @@ function Mouse(canvas, camera, elements) {
 
 		var topElement = null;
 
-		for (var j = 0; j < collection.length; j++) {
-			var zElements = collection[j];
+		for (var key in collection) {
+			var zElements = collection[key];
 			for (var i = 0; i < zElements.length; i++) {
 				if (zElements[i].mouseInteract) {
 					if (zElements[i].visible && camera.onFrame(zElements[i])) {

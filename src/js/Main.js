@@ -23,6 +23,7 @@ var mapNames = {
 
 var pieceWrapper = new Element();
 pieceWrapper.visible = true;
+pieceWrapper.z = 10;
 GameON.add(pieceWrapper);
 
 for(var i = 0; i < pieceNames.length; i++) {

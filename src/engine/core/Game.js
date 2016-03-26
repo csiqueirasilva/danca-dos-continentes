@@ -33,8 +33,8 @@ var GameON = (function () {
 	};
 
 	Game.prototype.drawElementCollection = function (elementCollection) {
-		for (var j = 0; j < elementCollection.length; j++) {
-			var zElements = elementCollection[j];
+		for (var key in elementCollection) {
+			var zElements = elementCollection[key];
 			for (var i = 0; i < zElements.length; i++) {
 				if (zElements[i].visible && this.Camera.onFrame(zElements[i])) {
 					zElements[i].draw();
