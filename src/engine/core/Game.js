@@ -60,8 +60,38 @@ var GameON = (function () {
 		setElementPosition(ndc, element.rotation);
 
 		ctx.fillStyle = 'rgb(' + element.color.r + ', ' + element.color.g + ', ' + element.color.b + ')';
-		ctx.rect(ndc.pos.x, ndc.pos.y, ndc.size.x, ndc.size.y);
+		ctx.rect(-ndc.size.x / 2, -ndc.size.y / 2, ndc.size.x, ndc.size.y);
 		ctx.fill();
+
+		ctx.restore();
+	}
+
+	function drawBoundingRect(ndc) {
+		ctx.strokeStyle = '#FFFFFF';
+		ctx.strokeRect(-ndc.size.x / 2, -ndc.size.y / 2, ndc.size.x, ndc.size.y);
+	}
+
+	function drawText(element) {
+		
+		var fontSize = ((element.h / camera.h) * element.scaleH) * h;
+		
+		ctx.font = fontSize + "px " + (element.font || "Arial");
+		
+		var width = ctx.measureText(element.txt).width;
+		
+		element.w = (width / w) * camera.w;
+		
+		var ndc = getNDC(element);
+
+		setElementPosition(ndc, element.rotation);
+
+		ctx.fillStyle = 'rgb(' + element.color.r + ', ' + element.color.g + ', ' + element.color.b + ')';
+		ctx.textBaseline = 'top';
+		ctx.fillText(element.txt, -ndc.size.x / 2, -ndc.size.y / 2);
+
+		if (DEBUG_MODE) {
+			drawBoundingRect(ndc);
+		}
 
 		ctx.restore();
 	}
@@ -74,11 +104,7 @@ var GameON = (function () {
 		ctx.drawImage(element.img, -ndc.size.x / 2, -ndc.size.y / 2, ndc.size.x, ndc.size.y);
 
 		if (DEBUG_MODE) {
-			ctx.strokeStyle = '#FFFFFF';
-			ctx.beginPath();
-			ctx.rect(-ndc.size.x / 2, -ndc.size.y / 2, ndc.size.x, ndc.size.y);
-			ctx.stroke();
-			ctx.closePath();
+			drawBoundingRect(ndc);
 		}
 
 		ctx.restore();
@@ -150,7 +176,7 @@ var GameON = (function () {
 
 	function moveRenderOrder(element, z) {
 		var added = onScene(element);
-		if(added) {
+		if (added) {
 			remove(element);
 			element.z = z;
 			add(element);
@@ -170,6 +196,7 @@ var GameON = (function () {
 		drawImage: drawImage,
 		drawRect: drawRect,
 		drawLine: drawLine,
+		drawText: drawText,
 		onScene: onScene,
 		moveRenderOrder: moveRenderOrder,
 		/* Components */
