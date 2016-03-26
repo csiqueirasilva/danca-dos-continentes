@@ -19,22 +19,11 @@ DisplayText.prototype.setSize = function (n) {
 	this.h = (n / 100) * GameON.Camera.h;
 };
 
+DisplayText.prototype.setPosition = function (x, y) {
+	this.x = (x / 100) * GameON.Camera.w;
+	this.y = (y / 100) * GameON.Camera.h;
+};
+
 DisplayText.prototype.draw = function () {
 	GameON.drawText(this);
-};
-
-DisplayText.prototype.mouseOver = function () {
-	this.color = {
-		r: parseInt(255 * Math.random()),
-		g: parseInt(255 * Math.random()),
-		b: parseInt(255 * Math.random())
-	};
-};
-
-DisplayText.prototype.mouseOut = function () {
-	this.color = {
-		r: parseInt(255 * Math.random()),
-		g: parseInt(255 * Math.random()),
-		b: parseInt(255 * Math.random())
-	};
 };

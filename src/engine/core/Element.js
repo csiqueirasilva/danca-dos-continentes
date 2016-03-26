@@ -59,8 +59,8 @@ Element.prototype.setScale = function (n) {
 	this.scaleH = this.scaleW = parseFloat(n);
 };
 
-Element.prototype.setZIndex = function(z) {
-	if(!GameON.moveRenderOrder(this, z)) {
+Element.prototype.setZIndex = function (z) {
+	if (!GameON.moveRenderOrder(this, z)) {
 		this.z = z;
 	}
 };
@@ -81,10 +81,10 @@ Element.prototype.setZIndex = function(z) {
 
 			var tx1 = (px - x1) / (x2 - x1);
 			var ty1 = (py - y1) / (y2 - y1);
-			
+
 			var tx2 = (px - x3) / (x4 - x3);
 			var ty2 = (py - y3) / (y4 - y3);
-			
+
 			if (tx1 >= 0 && tx1 <= 1 && ty1 >= 0 && ty1 <= 1 &&
 				tx2 >= 0 && tx2 <= 1 && ty2 >= 0 && ty2 <= 1) {
 				ret = 1;
@@ -96,24 +96,38 @@ Element.prototype.setZIndex = function(z) {
 
 	Element.prototype.isPointInside = function (x, y) {
 
+		var ret = false;
+
 		var corners = this.getCorners();
-		var acc = 0;
 
-		var sx = x - this.w * 100;
-		var sy = y;
+		if (this.rotation % (Math.PI * 2) !== 0) {
 
-		var rotatedY0 = sx * Math.sin(this.rotation) + sy * Math.cos(this.rotation);
-		var rotatedX0 = sx * Math.cos(this.rotation) - sy * Math.sin(this.rotation);
+			var acc = 0;
 
-		var rotatedX1 = x;
-		var rotatedY1 = y;
+			var sx = x - this.w * 100;
+			var sy = y;
 
-		acc += intersects(corners[0].x, corners[0].y, corners[1].x, corners[1].y, rotatedX0, rotatedY0, rotatedX1, rotatedY1);
-        acc += intersects(corners[1].x, corners[1].y, corners[2].x, corners[2].y, rotatedX0, rotatedY0, rotatedX1, rotatedY1);
-        acc += intersects(corners[3].x, corners[3].y, corners[0].x, corners[0].y, rotatedX0, rotatedY0, rotatedX1, rotatedY1);
-        acc += intersects(corners[2].x, corners[2].y, corners[3].x, corners[3].y, rotatedX0, rotatedY0, rotatedX1, rotatedY1);
+			var rotatedY0 = sx * Math.sin(this.rotation) + sy * Math.cos(this.rotation);
+			var rotatedX0 = sx * Math.cos(this.rotation) - sy * Math.sin(this.rotation);
 
-		return acc % 2 === 0 ? false : true;
+			var rotatedX1 = x;
+			var rotatedY1 = y;
+
+			acc += intersects(corners[0].x, corners[0].y, corners[1].x, corners[1].y, rotatedX0, rotatedY0, rotatedX1, rotatedY1);
+			acc += intersects(corners[1].x, corners[1].y, corners[2].x, corners[2].y, rotatedX0, rotatedY0, rotatedX1, rotatedY1);
+			acc += intersects(corners[3].x, corners[3].y, corners[0].x, corners[0].y, rotatedX0, rotatedY0, rotatedX1, rotatedY1);
+			acc += intersects(corners[2].x, corners[2].y, corners[3].x, corners[3].y, rotatedX0, rotatedY0, rotatedX1, rotatedY1);
+
+			ret = acc % 2 !== 0;
+			
+		} else {
+			ret = x >= corners[1].x && 
+				x <= corners[0].x &&
+				y <= corners[0].y &&
+				y >= corners[2].y;
+		}
+
+		return ret;
 	};
 
 })();

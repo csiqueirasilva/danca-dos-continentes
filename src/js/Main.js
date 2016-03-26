@@ -32,23 +32,16 @@ for(var i = 0; i < pieceNames.length; i++) {
 	
 	pieces.push(square);
 	
-	GameON.add(square);
+	//GameON.add(square);
 }
 
-var sq = new Square({
-	g: 255
+var mainTitle = new ClickableText({
+	txt: "Dança dos Continentes"
 });
 
-sq.x = sq.y = 0;
-
-sq.w = 250;
-sq.h = 250;
-
-GameON.add(sq);
-
-var mainTitle = new DisplayText();
-
 mainTitle.setSize(5);
+
+mainTitle.setPosition(0, 42.5);
 
 GameON.add(mainTitle);
 
