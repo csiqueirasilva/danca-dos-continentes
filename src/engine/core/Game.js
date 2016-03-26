@@ -21,16 +21,6 @@ var GameON = (function () {
 
 	Game.prototype = Object.create(Element.prototype);
 
-	Game.prototype.moveRenderOrder = function (element, z) {
-		var added = this.isChild(element);
-		if (added) {
-			this.remove(element);
-			element.z = z;
-			this.add(element);
-		}
-		return added;
-	};
-
 	Game.prototype.start = function () {
 
 		function animate() {

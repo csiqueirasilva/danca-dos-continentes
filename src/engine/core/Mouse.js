@@ -69,6 +69,31 @@ function Mouse(canvas, camera, elements) {
 
 	/* Mouse over */
 
+	function checkTopElement(collection, mouseX, mouseY) {
+
+		var topElement = null;
+
+		for (var j = 0; j < collection.length; j++) {
+			var zElements = collection[j];
+			for (var i = 0; i < zElements.length; i++) {
+				if (zElements[i].mouseInteract) {
+					if (zElements[i].visible && camera.onFrame(zElements[i])) {
+						var isInsideElement = zElements[i].isPointInside(mouseX, mouseY);
+						if (isInsideElement) {
+							topElement = zElements[i];
+						}
+					}
+				}
+				var childTopElement = checkTopElement(zElements[i]._children, mouseX, mouseY);
+				if(childTopElement !== null) {
+					topElement = childTopElement;
+				}
+			}
+		}
+
+		return topElement;
+	}
+
 	canvas.addEventListener('mousemove', function (e) {
 		var mouseX = e.clientX / window.innerWidth - 0.5;
 		var mouseY = 0.5 - e.clientY / window.innerHeight;
@@ -79,21 +104,7 @@ function Mouse(canvas, camera, elements) {
 		CurrentMousePosition.x = mouseX;
 		CurrentMousePosition.y = mouseY;
 
-		var topElement = null;
-
-		for (var j = 0; j < elements.length; j++) {
-			var zElements = elements[j];
-			for (var i = 0; i < zElements.length; i++) {
-				if (zElements[i].mouseInteract) {
-					if (zElements[i].visible && camera.onFrame(zElements[i])) {
-						var isInsideElement = zElements[i].isPointInside(mouseX, mouseY);
-						if (isInsideElement) {
-							topElement = zElements[i];
-						}
-					}
-				}
-			}
-		}
+		var topElement = checkTopElement(elements, mouseX, mouseY);
 
 		if (topElement && topElement.mouseMove instanceof Function) {
 			topElement.mouseMove(mouseX, mouseY);
@@ -110,12 +121,13 @@ function Mouse(canvas, camera, elements) {
 				LastTopElement.mouseOver();
 			}
 		}
+
 	});
 
 	// methods
 
 	var eventInterval = setInterval(function () {
-		
+
 		if (LastTopElement !== null) {
 
 			if (LastTopElement.draggable) {
@@ -129,7 +141,7 @@ function Mouse(canvas, camera, elements) {
 
 		LastMousePosition.x = CurrentMousePosition.x;
 		LastMousePosition.y = CurrentMousePosition.y;
-		
+
 	}, 2);
 
 	function dragMouseDown(element) {

@@ -6,11 +6,11 @@ function Piece(ops) {
 Piece.prototype = Object.create(SquareImage.prototype);
 
 Piece.prototype.mouseOver = function () {
-	GameON.moveRenderOrder(this, this.z + 1);
+	this._parent.moveRenderOrder(this, this.z + 1);
 };
 
 Piece.prototype.mouseOut = function () {
-	GameON.moveRenderOrder(this, this.z - 1);
+	this._parent.moveRenderOrder(this, this.z - 1);
 };
 
 Piece.prototype.mouseMove = function (mouseX, mouseY) {

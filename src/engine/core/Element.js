@@ -13,13 +13,25 @@ function Element() {
 	this.rotatable = false;
 	this.rotateSpeed = 0.1;
 	this._children = [];
+	this._parent = null;
 }
 
+Element.prototype.moveRenderOrder = function (element, z) {
+	var added = this.isChild(element);
+	if (added) {
+		this.remove(element);
+		element.z = z;
+		this.add(element);
+	}
+	return added;
+};
+
 Element.prototype.remove = function (element) {
-	var added = onScene(element);
+	var added = this.isChild(element);
 	if (added) {
 		var idx = this._children[element.z].indexOf(element);
 		this._children[element.z].splice(idx, 1);
+		this._parent = null;
 	}
 	return added;
 };
@@ -30,6 +42,7 @@ Element.prototype.add = function (element) {
 			this._children[element.z] = [];
 		}
 		this._children[element.z].push(element);
+		element._parent = this;
 	}
 };
 
@@ -83,7 +96,7 @@ Element.prototype.setScale = function (n) {
 };
 
 Element.prototype.setZIndex = function (z) {
-	if (!GameON.moveRenderOrder(this, z)) {
+	if (this._parent !== null && !this._parent.moveRenderOrder(this, z)) {
 		this.z = z;
 	}
 };
