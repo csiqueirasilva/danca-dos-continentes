@@ -14,22 +14,61 @@ function CanvasInterfaceImpl() {
 	document.body.appendChild(this.mainCanvas);
 }
 
-CanvasInterfaceImpl.prototype.setElementPosition = function setElementPosition(ndc, rotation) {
+CanvasInterfaceImpl.prototype.drawByType = function(element) {
+	if(element instanceof DisplayText) {
+		this.drawText(element);
+	} else if(element instanceof SquareImage) {
+		this.drawImage(element);
+	} else if(element instanceof Square) {
+		this.drawRect(element);
+	} else if (element instanceof Line) {
+		this.drawLine(element);
+	}
+};
+
+CanvasInterfaceImpl.prototype.getNDC = function (element, camera) {
+	var ndcPos = camera.getNDCPos(element.x, element.y);
+	ndcPos.x *= this.w;
+	ndcPos.y *= this.h;
+
+	var ndcSize = camera.getNDCSize(element.w, element.h);
+	ndcSize.x *= this.w;
+	ndcSize.y *= this.h;
+
+	ndcPos.x -= ndcSize.x / 2;
+	ndcPos.y -= ndcSize.y / 2;
+
+	return {
+		pos: ndcPos,
+		size: ndcSize
+	};
+};
+
+CanvasInterfaceImpl.prototype.setElementPosition = function setElementPosition(element, camera) {
+	var elementNDC = this.getNDC(element, camera);
+	element.updateNDC(elementNDC);
+	
+	var ndc = element._ndc;
+	
 	this.ctx.save();
-	this.ctx.translate(ndc.pos.x + ndc.size.x / 2, ndc.pos.y + ndc.size.y / 2);
-	this.ctx.rotate(rotation);
+	
+	this.ctx.translate(ndc.pos.x + ndc.size.x / 2, GameON.Camera.h - (ndc.pos.y + ndc.size.y / 2));
+	this.ctx.rotate(element.rotation);
+	this.ctx.scale(element.scaleW, element.scaleH);
+};
+
+CanvasInterfaceImpl.prototype.restoreElementPosition = function () {
+	this.ctx.restore();
 };
 
 CanvasInterfaceImpl.prototype.drawRect = function drawRect(element) {
-	var ndc = GameON.getNDC(element);
-
+	var ndc = element._ndc;
+	
 	this.setElementPosition(ndc, element.rotation);
 
 	this.ctx.fillStyle = 'rgb(' + element.color.r + ', ' + element.color.g + ', ' + element.color.b + ')';
 	this.ctx.rect(-ndc.size.x / 2, -ndc.size.y / 2, ndc.size.x, ndc.size.y);
 	this.ctx.fill();
-
-	this.ctx.restore();
 };
 
 CanvasInterfaceImpl.prototype.drawBoundingRect = function drawBoundingRect(ndc) {
@@ -38,50 +77,20 @@ CanvasInterfaceImpl.prototype.drawBoundingRect = function drawBoundingRect(ndc) 
 };
 
 CanvasInterfaceImpl.prototype.drawText = function drawText(element) {
-
-	var fontSize = ((element.h / GameON.Camera.h) * element.scaleH) * this.h;
-
-	this.ctx.font = fontSize + "px " + (element.font || "Arial");
-
-	var width = this.ctx.measureText(element.txt).width;
-
-	element.w = (width / this.w) * GameON.Camera.w;
-
-	var ndc = GameON.getNDC(element);
-
-	this.setElementPosition(ndc, element.rotation);
-
+	var ndc = element._ndc;
+	
 	this.ctx.fillStyle = 'rgb(' + element.color.r + ', ' + element.color.g + ', ' + element.color.b + ')';
 	this.ctx.textBaseline = 'top';
 	this.ctx.fillText(element.txt, -ndc.size.x / 2, -ndc.size.y / 2);
-
-	if (GameON.DEBUG_MODE) {
-		this.drawBoundingRect(ndc);
-	}
-
-	this.ctx.restore();
 };
 
 CanvasInterfaceImpl.prototype.drawImage = function drawImage(element) {
-	var ndc = GameON.getNDC(element);
-
-	this.setElementPosition(ndc, element.rotation);
+	var ndc = element._ndc;
 
 	this.ctx.drawImage(element.img, -ndc.size.x / 2, -ndc.size.y / 2, ndc.size.x, ndc.size.y);
-
-	if (GameON.DEBUG_MODE) {
-		this.drawBoundingRect(ndc);
-	}
-
-	this.ctx.restore();
 };
 
 CanvasInterfaceImpl.prototype.drawLine = function drawLine(element) {
-
-	var ndc = GameON.getNDC(element);
-
-	this.setElementPosition(ndc, element.rotation);
-
 	var sx = (element.sx / GameON.Camera.w) * this.w;
 	var sy = -(element.sy / GameON.Camera.h) * this.h;
 
@@ -94,8 +103,6 @@ CanvasInterfaceImpl.prototype.drawLine = function drawLine(element) {
 	this.ctx.lineTo(ex, ey);
 	this.ctx.stroke();
 	this.ctx.closePath();
-
-	this.ctx.restore();
 };
 
 CanvasInterfaceImpl.prototype.clear = function () {

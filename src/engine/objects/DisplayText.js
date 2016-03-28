@@ -1,11 +1,11 @@
-function DisplayText (ops) {
+function DisplayText(ops) {
 	ops = ops || {};
 	Element.apply(this, arguments);
 	this.w = ops.w || 0;
 	this.h = ops.h || 0;
-	
+
 	this.txt = ops.txt || "This is a text";
-	
+
 	this.color = {
 		r: ops.r || 255,
 		g: ops.g || 0,
@@ -24,6 +24,14 @@ DisplayText.prototype.setPosition = function (x, y) {
 	this.y = (y / 100) * GameON.Camera.h;
 };
 
-DisplayText.prototype.draw = function () {
-	GameON.Canvas.drawText(this);
+DisplayText.prototype.draw = function (ctx) {
+	var fontSize = (this.h / GameON.Camera.h) * GameON.Canvas.h;
+
+	ctx.font = fontSize + "px " + (this.font || "Arial");
+
+	var width = ctx.measureText(this.txt).width;
+
+	this.w = (width / GameON.Canvas.w) * GameON.Camera.w;
+
+	return true;
 };

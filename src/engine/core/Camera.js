@@ -1,47 +1,57 @@
-function Camera (ops) {
+function Camera(ops) {
 	ops = ops || {};
 	Element.apply(this, arguments);
-	
+
 	this.w = ops.w || 880;
 	this.h = ops.h || 495;
 }
 
 Camera.prototype = Object.create(Element.prototype);
 
-Camera.prototype.getNDCSize = function(x, y) {
-	
+Camera.prototype.getNDCSize = function (x, y) {
+
 	var xcoord = (x / this.w);
 	var ycoord = (y / this.h);
-	
+
 	return {x: xcoord, y: ycoord};
 };
 
-Camera.prototype.getNDCPos = function(x, y) {
-	
-	var xcoord = (x / this.w) + 0.5;
-	var ycoord = 0.5 - (y / this.h);
-	
+Camera.prototype.getNDCPos = function (x, y) {
+
+	var xcoord = (x / this.w);
+	var ycoord = (y / this.h);
+
 	return {x: xcoord, y: ycoord};
 };
 
-Camera.prototype.onFrame = function(e) {
+Camera.prototype.onFrame = function (e) {
 	// check 4 corners on frame
 	var coords = e.getCorners();
 	
+//	if(e instanceof DisplayText && !(e instanceof ClickableText)) {
+//		debugger;
+//	}
+
 	var acc = 0;
-	
-	for(var i = 0; i < coords.length; i++) {
-		var ndc = this.getNDCPos(coords[i]);
-		if(ndc.x < 0 || ndc.x > 1 || ndc.y < 0 || ndc.y > 1) {
+
+	var limitPosX = this.x + this.w / 2;
+	var limitPosY = this.y + this.h / 2;
+	var limitNegX = this.x - this.w / 2;
+	var limitNegY = this.y - this.h / 2;
+
+	for (var i = 0; i < coords.length; i++) {
+		var c = coords[i];
+
+		if (c.x < limitNegX || c.x > limitPosX || c.y < limitNegY || c.y > limitPosY) {
 			acc++;
 		}
 	}
 
 	var ret = true;
 
-	if(acc === 4) {
+	if (acc === 4) {
 		ret = false;
 	}
-	
+
 	return ret;
 };

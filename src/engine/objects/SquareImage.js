@@ -33,9 +33,7 @@ function SquareImage(ops) {
 SquareImage.prototype = Object.create(Square.prototype);
 
 SquareImage.prototype.draw = function () {
-	if(this.ready) {
-		GameON.Canvas.drawImage(this);
-	}
+	return this.ready;
 };
 
 SquareImage.prototype.inVisiblePixel = function (mouseX, mouseY) {

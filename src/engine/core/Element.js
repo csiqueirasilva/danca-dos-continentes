@@ -14,7 +14,22 @@ function Element() {
 	this.rotateSpeed = 0.1;
 	this._children = [];
 	this._parent = null;
+	this._ndc = {pos: {x: 0, y: 0}, size: {x: 0, y: 0}};
 }
+
+Element.prototype.updateNDC = function (ndc) {
+	if (this._parent !== null) {
+		this._ndc.pos.x = ndc.pos.x + this._parent._ndc.pos.x;
+		this._ndc.pos.y = ndc.pos.y + this._parent._ndc.pos.y;
+		this._ndc.size.x = ndc.size.x + this._parent._ndc.size.x;
+		this._ndc.size.y = ndc.size.y + this._parent._ndc.size.y;
+	} else {
+		this._ndc.pos.x = ndc.pos.x;
+		this._ndc.pos.y = ndc.pos.y;
+		this._ndc.size.x = ndc.size.x;
+		this._ndc.size.y = ndc.size.y;
+	}
+};
 
 Element.prototype.moveRenderOrder = function (element, z) {
 	var added = this.isChild(element);
@@ -31,7 +46,7 @@ Element.prototype.remove = function (element) {
 	if (added) {
 		var idx = this._children[element.z].indexOf(element);
 		this._children[element.z].splice(idx, 1);
-		this._parent = null;
+		element._parent = null;
 	}
 	return added;
 };
@@ -51,6 +66,7 @@ Element.prototype.isChild = function (element) {
 };
 
 Element.prototype.draw = function () {
+	return true;
 };
 
 Element.prototype.getCorners = function () {

@@ -77,4 +77,6 @@ for(var key in mapNames) {
 	mainMenuWrapper.add(link);
 }
 
+GameON._debug = true;
+
 GameON.start();

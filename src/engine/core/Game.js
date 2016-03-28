@@ -1,7 +1,5 @@
 var GameON = (function () {
 
-	var DEBUG_MODE = true;
-
 	function Game(ops) {
 		ops = ops || {};
 		Element.apply(this, arguments);
@@ -16,49 +14,56 @@ var GameON = (function () {
 		this.Mouse = new Mouse(this.Canvas.mainCanvas, this.Camera, this._children);
 		this.add(this.Mouse.CollisionLine);
 
-		this.DEBUG_MODE = DEBUG_MODE;
+		this._debug = ops.debug || false;
 	}
 
 	Game.prototype = Object.create(Element.prototype);
+
+	Game.prototype.draw = function () {
+
+		this.x = this.Camera.w / 2;
+		this.y = this.Camera.h / 2;
+
+		return true;
+	};
 
 	Game.prototype.start = function () {
 
 		function animate() {
 			requestAnimationFrame(animate);
 			GameON.Canvas.clear();
-			GameON.drawElementCollection(GameON._children);
+			GameON.drawElement(GameON);
 		}
 
 		animate();
+	};
+
+	Game.prototype.drawElement = function (element) {
+		if (element.draw(this.Canvas.ctx)) {
+			this.Canvas.setElementPosition(element, this.Camera);
+
+			// should check if it is on camera's frame
+			this.Canvas.drawByType(element);
+
+			if (this._debug) {
+				this.Canvas.drawBoundingRect(element._ndc);
+			}
+
+			this.Canvas.restoreElementPosition();
+
+			this.drawElementCollection(element._children);
+		}
 	};
 
 	Game.prototype.drawElementCollection = function (elementCollection) {
 		for (var key in elementCollection) {
 			var zElements = elementCollection[key];
 			for (var i = 0; i < zElements.length; i++) {
-				if (zElements[i].visible && this.Camera.onFrame(zElements[i])) {
-					zElements[i].draw();
-					this.drawElementCollection(zElements[i]._children);
+				if (zElements[i].visible) {
+					this.drawElement(zElements[i]);
 				}
 			}
 		}
-	};
-
-	Game.prototype.getNDC = function (element) {
-		var ndcPos = this.Camera.getNDCPos(element.x, element.y);
-		ndcPos.x *= this.Canvas.w;
-		ndcPos.y *= this.Canvas.h;
-		var ndcSize = this.Camera.getNDCSize(element.w, element.h);
-		ndcSize.x *= this.Canvas.w * element.scaleW;
-		ndcSize.y *= this.Canvas.h * element.scaleH;
-
-		ndcPos.x -= ndcSize.x / 2;
-		ndcPos.y -= ndcSize.y / 2;
-
-		return {
-			pos: ndcPos,
-			size: ndcSize
-		};
 	};
 
 	var GameInstance = new Game();

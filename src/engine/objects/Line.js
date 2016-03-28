@@ -20,5 +20,5 @@ function Line(ops) {
 Line.prototype = Object.create(Element.prototype);
 
 Line.prototype.draw = function () {
-	GameON.Canvas.drawLine(this);
+	return true;
 };

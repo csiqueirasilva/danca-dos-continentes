@@ -76,7 +76,8 @@ function Mouse(canvas, camera, elements) {
 		for (var key in collection) {
 			var zElements = collection[key];
 			for (var i = 0; i < zElements.length; i++) {
-				if (zElements[i].visible && camera.onFrame(zElements[i])) {
+				// needs to check if it is on camera's frame
+				if (zElements[i].visible) {
 
 					if (zElements[i].mouseInteract) {
 
