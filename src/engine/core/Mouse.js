@@ -82,6 +82,7 @@ function Mouse(canvas, camera, elements) {
 					if (zElements[i].mouseInteract) {
 
 						var isInsideElement = zElements[i].isPointInside(mouseX, mouseY);
+						
 						if (isInsideElement) {
 							topElement = zElements[i];
 						}

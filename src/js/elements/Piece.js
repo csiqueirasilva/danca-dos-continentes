@@ -5,6 +5,8 @@ function Piece(ops) {
 
 Piece.prototype = Object.create(SquareImage.prototype);
 
+Piece.prototype.rotationAngle = 6 * Math.PI / 180;
+
 Piece.prototype.mouseDown = Clickable.prototype.mouseDown;
 
 Piece.prototype.mouseUp = Clickable.prototype.mouseOver;
@@ -26,7 +28,7 @@ Piece.prototype.mouseMove = function (mouseX, mouseY) {
 
 Piece.prototype.mouseWheel = function (mouseX, mouseY, direction, ev) {
 	if (this.inVisiblePixel(mouseX, mouseY)) {
-		var rotateSpeed = 0.1 * direction;
+		var rotateSpeed = this.rotationAngle * direction;
 		this.rotation += rotateSpeed;
 	}
 };

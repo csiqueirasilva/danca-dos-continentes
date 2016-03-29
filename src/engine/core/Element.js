@@ -124,7 +124,8 @@ Element.prototype.setZIndex = function (z) {
 		var denominator = (x1 - x2) * (y3 - y4) - (y1 - y2) * (x3 - x4);
 		var ret = 0;
 
-		if (denominator !== 0) {
+		// check if equals 0 against a threshold
+		if (Math.abs(denominator) > 1E-6) {
 			var pxNumerator = (x1 * y2 - y1 * x2) * (x3 - x4) - (x1 - x2) * (x3 * y4 - y3 * x4);
 			var pyNumerator = (x1 * y2 - y1 * x2) * (y3 - y4) - (y1 - y2) * (x3 * y4 - y3 * x4);
 
@@ -152,9 +153,9 @@ Element.prototype.setZIndex = function (z) {
 
 		var corners = this.getCorners();
 
-		if (this.rotation % (Math.PI * 2) !== 0) {
+		var acc = 0;
 
-			var acc = 0;
+		if (this.rotation % Math.PI / 2 > 1E-6) {
 
 			var sx = x - this.w * 100;
 			var sy = y;
@@ -171,12 +172,28 @@ Element.prototype.setZIndex = function (z) {
 			acc += intersects(corners[2].x, corners[2].y, corners[3].x, corners[3].y, rotatedX0, rotatedY0, rotatedX1, rotatedY1);
 
 			ret = acc % 2 !== 0;
-
 		} else {
-			ret = x >= corners[1].x &&
-				x <= corners[0].x &&
-				y <= corners[0].y &&
-				y >= corners[2].y;
+
+			var minX = Infinity;
+			var maxX = -Infinity;
+			var minY = Infinity;
+			var maxY = -Infinity;
+
+			for (var i = 0; i < corners.length; i++) {
+				if (corners[i].x < minX) {
+					minX = corners[i].x;
+				} else if (corners[i].x > maxX) {
+					maxX = corners[i].x;
+				}
+
+				if (corners[i].y < minY) {
+					minY = corners[i].y;
+				} else if (corners[i].y > maxY) {
+					maxY = corners[i].y;
+				}
+			}
+			
+			ret = x >= minX && x <= maxX && y >= minY && y <= maxY;
 		}
 
 		return ret;

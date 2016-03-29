@@ -28,10 +28,6 @@ Camera.prototype.onFrame = function (e) {
 	// check 4 corners on frame
 	var coords = e.getCorners();
 	
-//	if(e instanceof DisplayText && !(e instanceof ClickableText)) {
-//		debugger;
-//	}
-
 	var acc = 0;
 
 	var limitPosX = this.x + this.w / 2;

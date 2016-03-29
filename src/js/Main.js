@@ -24,7 +24,13 @@ var mapNames = {
 var pieceWrapper = new Element();
 pieceWrapper.visible = false;
 pieceWrapper.z = 10;
-GameON.add(pieceWrapper);
+
+var gameWrapper = new Element();
+gameWrapper.add(pieceWrapper);
+
+GameON.add(gameWrapper);
+
+var scale = (GameON.Camera.w * 0.9) / 457;
 
 for(var i = 0; i < pieceNames.length; i++) {
 	var square = new Piece({
@@ -34,9 +40,9 @@ for(var i = 0; i < pieceNames.length; i++) {
 	square.x = (Math.random() * 0.8 - 0.4) * GameON.Camera.w;
 	square.y = (Math.random() * 0.8 - 0.4) * GameON.Camera.h;
 
-	square.setScale(2.5);
+	square.setScale(scale);
 	
-	square.rotation = (Math.PI * 2) * Math.random();
+	square.rotation = Piece.prototype.rotationAngle * parseInt(Math.random() * 100);
 	
 	pieceWrapper.add(square);
 }
@@ -72,6 +78,16 @@ for(var key in mapNames) {
 	link.clickCallback = function () {
 		pieceWrapper.visible = true;
 		mainMenuWrapper.visible = false;
+		
+		var bg = new SquareImage({
+			imgPath: 'imgs/futuro/' + 'globo-com-fundo' + '.png'
+		});
+		
+		bg.setScale(scale);
+		
+		bg.z = 0;
+		
+		gameWrapper.add(bg);
 	};
 	
 	mainMenuWrapper.add(link);
