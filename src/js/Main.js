@@ -63,7 +63,7 @@ mainMenuWrapper.add(mainTitle);
 var idx = 0;
 var mapOptionStart = 20;
 var mapOptionSize = 5;
-	
+
 for(var key in mapNames) {
 	var link = new ClickableText({
 		txt: mapNames[key]
