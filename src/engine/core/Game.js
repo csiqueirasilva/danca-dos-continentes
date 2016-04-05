@@ -30,9 +30,9 @@ var GameON = (function () {
 	Game.prototype.start = function () {
 
 		function animate() {
-			requestAnimationFrame(animate);
 			GameON.Canvas.clear();
-			GameON.drawElement(GameON);
+			GameON.drawElement(GameON);			
+			requestAnimationFrame(animate);
 		}
 
 		animate();

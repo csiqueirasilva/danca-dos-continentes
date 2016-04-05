@@ -8,7 +8,7 @@ Piece.prototype = Object.create(SquareImage.prototype);
 
 Piece.prototype.rotationAngle = 6 * Math.PI / 180;
 
-Piece.prototype.snapRadius = (5 / (1920 * 1920 + 1080 * 1080)) * (GameON.Canvas.w * GameON.Canvas.w + GameON.Canvas.h * GameON.Canvas.h);
+Piece.prototype.snapRadius = (20 / Math.sqrt(1920 * 1920 + 1080 * 1080)) * Math.sqrt(GameON.Canvas.w * GameON.Canvas.w + GameON.Canvas.h * GameON.Canvas.h);
 
 Piece.prototype.snapRotation = 0.0333;
 
@@ -36,6 +36,7 @@ Piece.prototype.onSnapPosition = function () {
 		var x = this.target.x - this.x;
 		var y = this.target.y - this.y;
 		var r = Math.sqrt(x * x + y * y);
+		console.log(r);
 		ret = r <= this.snapRadius;
 	}
 	return ret;

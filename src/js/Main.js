@@ -122,4 +122,4 @@ setTimeout(function () {
 
 	GameON.start();
 
-}, 5000);
+}, 100);
