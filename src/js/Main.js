@@ -60,12 +60,7 @@ setTimeout(function () {
 
 		square.name = pieceNames[i];
 
-		square.x = (Math.random() * 0.8 - 0.4) * GameON.Camera.w;
-		square.y = (Math.random() * 0.8 - 0.4) * GameON.Camera.h;
-
 		square.setScale(scale);
-
-		square.rotation = Piece.prototype.rotationAngle * parseInt(Math.random() * 100);
 
 		pieces.push(square);
 		pieceWrapper.add(square);
@@ -105,9 +100,7 @@ setTimeout(function () {
 			var key = this._key;
 
 			for (var i = pieces.length - 1; i >= 0; i--) {
-				pieces[i].target = mapCoords[key][pieces[i].name];
-				pieces[i].target.x *= GameON.Canvas.w;
-				pieces[i].target.y *= GameON.Canvas.h;
+				pieces[i].initForGameplay(mapCoords[key]);
 			}
 
 			backgrounds[key].visible = true;
