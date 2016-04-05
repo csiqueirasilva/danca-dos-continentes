@@ -1,34 +1,11 @@
 setTimeout(function () {
 
-	var pieceNames = [
-		'AFR1',
-		'AFR2',
-		'AFR3',
-		'AFREU',
-		'Antartida',
-		'AUS',
-		'China',
-		'EU',
-		'India',
-		'NA',
-		'SA1',
-		'SA2',
-		'SA3'
-	];
+	var pieceNames = Piece.prototype.NAMES;
 
-	var mapNames = {
-		'futuro': 'Futuro',
-		'atual': 'Atual',
-		'pangeia': 'Pangeia',
-		'rodinia': 'Rodínia'
-	};
+	var mapNames = Map.prototype.NAMES;
 
-	var backgrounds = {};
+	var maps = {};
 	var pieces = [];
-
-	var mapCoords = {
-		'futuro': {"NA": {"x": -0.18637977164272845, "y": 0.23117491532868106}, "China": {"x": 0.24571767250782575, "y": 0.1720885745888408}, "AFR1": {"x": 0.048207442490614504, "y": 0.19379390859972642}, "SA2": {"x": -0.27242512203256397, "y": -0.031930093609597324}, "AFR3": {"x": 0.11041210450597441, "y": -0.022775481677659543}, "AUS": {"x": 0.3175262690116946, "y": -0.03878383317294758}, "SA3": {"x": -0.30253377199357295, "y": -0.13245170133154127}, "EU": {"x": 0.18870568335829407, "y": 0.28331003006977035}, "SA1": {"x": -0.33057147457608227, "y": -0.029115428793955785}, "AFREU": {"x": 0.11763335147560428, "y": 0.27595204857035516}, "AFR2": {"x": 0.09164785483328294, "y": 0.06870061602719109}, "India": {"x": 0.21073831328812148, "y": 0.09104912288686198}, "Antartida": {"x": -0.08066113777938186, "y": -0.3146024665293112}}
-	};
 
 	var pieceWrapper = new Element();
 	pieceWrapper.visible = false;
@@ -42,15 +19,15 @@ setTimeout(function () {
 	var scale = (GameON.Camera.w * 0.9) / 457;
 
 	for (var key in mapNames) {
-		var bg = new SquareImage({
-			imgPath: 'imgs/' + key + '/globo-com-fundo' + '.png'
+		var map = new Map({
+			imgPath: 'imgs/' + key + '/globo-com-fundo' + '.png',
+			key: key
 		});
 
-		bg.visible = false;
-		backgrounds[key] = bg;
-		gameWrapper.add(bg);
-		bg.setScale(scale);
-		bg.z = 0;
+		maps[key] = map;
+		gameWrapper.add(map);
+		map.setScale(scale);
+		map.z = 0;
 	}
 
 	for (var i = 0; i < pieceNames.length; i++) {
@@ -99,11 +76,18 @@ setTimeout(function () {
 		link.clickCallback = function () {
 			var key = this._key;
 
+			var map = maps[key];
+
 			for (var i = pieces.length - 1; i >= 0; i--) {
-				pieces[i].initForGameplay(mapCoords[key]);
+				pieces[i].initForGameplay(map);
 			}
 
-			backgrounds[key].visible = true;
+			map.initForGameplay(function endGameCallback() {
+				this.visible = false;
+				pieceWrapper.visible = false;
+				mainMenuWrapper.visible = true;
+			});
+
 			pieceWrapper.visible = true;
 			mainMenuWrapper.visible = false;
 		};

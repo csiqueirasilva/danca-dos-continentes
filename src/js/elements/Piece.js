@@ -3,9 +3,26 @@ function Piece(ops) {
 	SquareImage.apply(this, arguments);
 	this.target = {x: 0, y: 0};
 	this.snapped = false;
+	this.visible = false;
 }
 
 Piece.prototype = Object.create(SquareImage.prototype);
+
+Piece.prototype.NAMES = [
+	'AFR1',
+	'AFR2',
+	'AFR3',
+	'AFREU',
+	'Antartida',
+	'AUS',
+	'China',
+	'EU',
+	'India',
+	'NA',
+	'SA1',
+	'SA2',
+	'SA3'
+];
 
 Piece.prototype.zLevelUnsnapped = 10;
 Piece.prototype.zLevelSnapped = 8;
@@ -60,8 +77,10 @@ Piece.prototype.snap = function () {
 	this.draggable = false;
 	this.setZIndex(Piece.prototype.zLevelSnapped);
 	var obj = this;
-	setTimeout(function() {
+	setTimeout(function () {
 		obj.toSnapPosition();
+		obj._map.incrPiece(obj.name);
+		obj._map.checkEndGame();
 	}, 200);
 };
 
@@ -92,8 +111,14 @@ Piece.prototype.mouseWheel = function (mouseX, mouseY, direction, ev) {
 	}
 };
 
-Piece.prototype.initForGameplay = function (targetData) {
-	this.target = targetData[this.name];
+Piece.prototype.initForGameplay = function (map) {
+	
+	if(!(map instanceof Map)) {
+		throw "Piece not initialized with a map reference";
+	}
+	
+	this._map = map;
+	this.target = map.getPieceTarget(this.name);
 	this.target.x *= GameON.Canvas.w;
 	this.target.y *= GameON.Canvas.h;
 	this.setZIndex(Piece.prototype.zLevelUnsnapped);
@@ -101,4 +126,5 @@ Piece.prototype.initForGameplay = function (targetData) {
 	this.x = (Math.random() * 0.8 - 0.4) * GameON.Camera.w;
 	this.y = (Math.random() * 0.8 - 0.4) * GameON.Camera.h;
 	this.rotation = Piece.prototype.rotationAngle * parseInt(Math.random() * 100);
+	this.visible = true;
 };
