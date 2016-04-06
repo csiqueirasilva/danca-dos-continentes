@@ -28,7 +28,7 @@ Piece.prototype.NAMES = [
 Piece.prototype.zLevelUnsnapped = 10;
 Piece.prototype.zLevelSnapped = 8;
 
-Piece.prototype.rotationAngle = 2 * Math.PI / 180;
+Piece.prototype.rotationAngle = 6 * Math.PI / 180;
 
 Piece.prototype.snapRadius = (16 / Math.sqrt(1920 * 1920 + 1080 * 1080)) * Math.sqrt(GameON.Canvas.w * GameON.Canvas.w + GameON.Canvas.h * GameON.Canvas.h);
 

@@ -1,6 +1,6 @@
 setTimeout(function () {
 
-    GameON._debug = true;
+    GameON._debug = false;
 
     var pieceNames = Piece.prototype.NAMES;
 
@@ -154,4 +154,4 @@ setTimeout(function () {
 
     GameON.start();
 
-}, 100);
+}, 3000);
