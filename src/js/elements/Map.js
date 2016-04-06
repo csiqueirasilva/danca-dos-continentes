@@ -75,3 +75,7 @@ Map.prototype.checkEndGame = function checkEndGame() {
         this._endGameCallback();
     }
 };
+
+Map.prototype.getName = function getName() {
+    return Map.prototype.NAMES[this.key];
+};

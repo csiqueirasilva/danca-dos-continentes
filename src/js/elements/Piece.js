@@ -138,15 +138,18 @@ Piece.prototype.mouseWheel = function (mouseX, mouseY, direction, ev) {
 Piece.prototype.initForGameplay = function (map) {
 
     if (!(map instanceof Map)) {
-        throw "Piece not initialized with a map reference";
+        throw "Piece not initialized without a map reference";
     }
 
     this._map = map;
-    this.target = map.getPieceTarget(this.name);
-    this.target.x *= GameON.Canvas.w;
-    this.target.y *= GameON.Canvas.h;
-    this.target.rawrot = this.target.rot;
-    this.target.rot *= Math.PI * 2;
+    
+    var targetReference = map.getPieceTarget(this.name);
+    
+    this.target.x = targetReference.x * GameON.Canvas.w;
+    this.target.y = targetReference.y * GameON.Canvas.h;
+    this.target.rawrot = targetReference.rot;
+    this.target.rot = this.target.rawrot * Math.PI * 2;
+    
     this.setZIndex(Piece.prototype.zLevelUnsnapped);
     this.snapped = false;
     this.x = (Math.random() * 0.8 - 0.4) * GameON.Camera.w;

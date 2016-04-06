@@ -85,9 +85,23 @@ setTimeout(function () {
             }
 
             map.initForGameplay(function endGameCallback() {
-                this.visible = false;
-                pieceWrapper.visible = false;
-                mainMenuWrapper.visible = true;
+
+                var bg = this;
+
+                var gameOverText = new GameOverText({
+                    map: bg
+                });
+                
+                GameON.add(gameOverText);
+
+                setTimeout(function () {
+                    GameON.remove(gameOverText);
+                    delete gameOverText;
+
+                    bg.visible = false;
+                    pieceWrapper.visible = false;
+                    mainMenuWrapper.visible = true;
+                }, 5000);
             });
 
             pieceWrapper.visible = true;
