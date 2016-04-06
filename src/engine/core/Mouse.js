@@ -1,186 +1,189 @@
 function Mouse(canvas, camera, elements) {
 
-	/* Mouse click */
-	var CurrentMousePosition = {
-		x: 0,
-		y: 0
-	};
+    /* Mouse click */
+    var CurrentMousePosition = {
+        x: 0,
+        y: 0
+    };
 
-	var LastMousePosition = {
-		x: 0,
-		y: 0
-	};
+    var LastMousePosition = {
+        x: 0,
+        y: 0
+    };
 
-	var LastTopElement = null;
+    var LastTopElement = null;
+    var DragElement = null;
 
-	/* Mouse up and down */
+    /* Mouse up and down */
 
-	var MOUSE_BTN = {
-		LEFT: 0,
-		MIDDLE: 1,
-		RIGHT: 2
-	};
+    var MOUSE_BTN = {
+        LEFT: 0,
+        MIDDLE: 1,
+        RIGHT: 2
+    };
 
-	var LeftMouseDown = false;
-	var MiddleMouseDown = false;
-	var RightMouseDown = false;
+    var LeftMouseDown = false;
+    var MiddleMouseDown = false;
+    var RightMouseDown = false;
 
-	canvas.addEventListener('wheel', function (e) {
-		var direction = (e.detail < 0 || e.wheelDelta > 0) ? 1 : -1;
+    canvas.addEventListener('wheel', function (e) {
+        var direction = (e.detail < 0 || e.wheelDelta > 0) ? 1 : -1;
 
-		if (LastTopElement && LastTopElement.mouseWheel instanceof Function) {
-			LastTopElement.mouseWheel(CurrentMousePosition.x, CurrentMousePosition.y, direction, e);
-		}
-	});
+        if (LastTopElement && LastTopElement.mouseWheel instanceof Function) {
+            LastTopElement.mouseWheel(CurrentMousePosition.x, CurrentMousePosition.y, direction, e);
+        }
+    });
 
-	canvas.addEventListener('mousedown', function (e) {
-		switch (e.button) {
-			case MOUSE_BTN.LEFT:
-				LeftMouseDown = true;
-				break;
-			case MOUSE_BTN.MIDDLE:
-				MiddleMouseDown = true;
-				break;
-			case MOUSE_BTN.RIGHT:
-				RightMouseDown = true;
-		}
+    canvas.addEventListener('mousedown', function (e) {
+        switch (e.button) {
+            case MOUSE_BTN.LEFT:
+                LeftMouseDown = true;
+                break;
+            case MOUSE_BTN.MIDDLE:
+                MiddleMouseDown = true;
+                break;
+            case MOUSE_BTN.RIGHT:
+                RightMouseDown = true;
+        }
 
-		if (LastTopElement && LastTopElement.mouseDown instanceof Function) {
-			LastTopElement.mouseDown(CurrentMousePosition.x, CurrentMousePosition.y, e);
-		}
-	});
+        if (LastTopElement && LastTopElement.mouseDown instanceof Function) {
+            DragElement = LastTopElement;
+            LastTopElement.mouseDown(CurrentMousePosition.x, CurrentMousePosition.y, e);
+        }
+    });
 
-	canvas.addEventListener('mouseup', function (e) {
-		switch (e.button) {
-			case MOUSE_BTN.LEFT:
-				LeftMouseDown = false;
-				break;
-			case MOUSE_BTN.MIDDLE:
-				MiddleMouseDown = false;
-				break;
-			case MOUSE_BTN.RIGHT:
-				RightMouseDown = false;
-		}
+    canvas.addEventListener('mouseup', function (e) {
+        switch (e.button) {
+            case MOUSE_BTN.LEFT:
+                LeftMouseDown = false;
+                break;
+            case MOUSE_BTN.MIDDLE:
+                MiddleMouseDown = false;
+                break;
+            case MOUSE_BTN.RIGHT:
+                RightMouseDown = false;
+        }
 
-		if (LastTopElement && LastTopElement.mouseUp instanceof Function) {
-			LastTopElement.mouseUp(e);
-		}
-	});
+        if (LastTopElement && LastTopElement.mouseUp instanceof Function) {
+            LastTopElement.mouseUp(e);
+            DragElement = null;
+        }
+    });
 
-	/* Mouse over */
+    /* Mouse over */
 
-	function checkTopElement(collection, mouseX, mouseY) {
+    function checkTopElement(collection, mouseX, mouseY) {
 
-		var topElement = null;
+        var topElement = null;
 
-		for (var key in collection) {
-			var zElements = collection[key];
-			for (var i = 0; i < zElements.length; i++) {
-				// needs to check if it is on camera's frame
-				if (zElements[i].visible) {
+        for (var key in collection) {
+            var zElements = collection[key];
+            for (var i = 0; i < zElements.length; i++) {
+                // needs to check if it is on camera's frame
+                if (zElements[i].visible) {
 
-					if (zElements[i].mouseInteract) {
+                    if (zElements[i].mouseInteract) {
 
-						var isInsideElement = zElements[i].isPointInside(mouseX, mouseY);
-						
-						if (isInsideElement) {
-							topElement = zElements[i];
-						}
-					}
+                        var isInsideElement = zElements[i].isPointInside(mouseX, mouseY);
 
-					var childTopElement = checkTopElement(zElements[i]._children, mouseX, mouseY);
+                        if (isInsideElement) {
+                            topElement = zElements[i];
+                        }
+                    }
 
-					if (childTopElement !== null) {
-						topElement = childTopElement;
-					}
+                    var childTopElement = checkTopElement(zElements[i]._children, mouseX, mouseY);
 
-				}
-			}
-		}
+                    if (childTopElement !== null) {
+                        topElement = childTopElement;
+                    }
 
-		return topElement;
-	}
+                }
+            }
+        }
 
-	canvas.addEventListener('mousemove', function (e) {
-		var mouseX = e.clientX / window.innerWidth - 0.5;
-		var mouseY = 0.5 - e.clientY / window.innerHeight;
+        return topElement;
+    }
 
-		mouseX = camera.x + mouseX * camera.w;
-		mouseY = camera.y + mouseY * camera.h;
+    canvas.addEventListener('mousemove', function (e) {
+        var mouseX = e.clientX / window.innerWidth - 0.5;
+        var mouseY = 0.5 - e.clientY / window.innerHeight;
 
-		CurrentMousePosition.x = mouseX;
-		CurrentMousePosition.y = mouseY;
+        mouseX = camera.x + mouseX * camera.w;
+        mouseY = camera.y + mouseY * camera.h;
 
-		var topElement = checkTopElement(elements, mouseX, mouseY);
+        CurrentMousePosition.x = mouseX;
+        CurrentMousePosition.y = mouseY;
 
-		if (topElement && topElement.mouseMove instanceof Function) {
-			topElement.mouseMove(mouseX, mouseY);
-		}
+        var topElement = checkTopElement(elements, mouseX, mouseY);
 
-		if (topElement !== LastTopElement) {
-			if (LastTopElement !== null && LastTopElement.mouseOut instanceof Function) {
-				LastTopElement.mouseOut();
-			}
+        if (topElement && topElement.mouseMove instanceof Function) {
+            topElement.mouseMove(mouseX, mouseY);
+        }
 
-			LastTopElement = topElement;
+        if (topElement !== LastTopElement) {
+            if (LastTopElement !== null && LastTopElement.mouseOut instanceof Function) {
+                LastTopElement.mouseOut();
+            }
 
-			if (LastTopElement !== null && LastTopElement.mouseOver instanceof Function) {
-				LastTopElement.mouseOver();
-			}
-		}
+            LastTopElement = topElement;
 
-	});
+            if (LastTopElement !== null && LastTopElement.mouseOver instanceof Function) {
+                LastTopElement.mouseOver();
+            }
+        }
 
-	// methods
+    });
 
-	var eventInterval = setInterval(function () {
+    // methods
 
-		if (LastTopElement !== null) {
+    var eventInterval = setInterval(function () {
 
-			if (LastTopElement.draggable) {
-				drag(LastTopElement);
-			}
+        if (DragElement !== null && DragElement.draggable) {
+            drag(DragElement);
+        }
 
-			if (LastTopElement.rotatable) {
-				rotate(LastTopElement);
-			}
-		}
+        if (LastTopElement !== null) {
 
-		LastMousePosition.x = CurrentMousePosition.x;
-		LastMousePosition.y = CurrentMousePosition.y;
+            if (LastTopElement.rotatable) {
+                rotate(LastTopElement);
+            }
+        }
 
-	}, 2);
+        LastMousePosition.x = CurrentMousePosition.x;
+        LastMousePosition.y = CurrentMousePosition.y;
 
-	function dragMouseDown(element) {
-		document.body.style.cursor = 'move';
-		element.x += CurrentMousePosition.x - LastMousePosition.x;
-		element.y += CurrentMousePosition.y - LastMousePosition.y;
-	}
+    }, 2);
 
-	function dragMouseUp(element) {
-		document.body.style.cursor = 'default';
-		LeftMouseDown = false;
-	}
+    function dragMouseDown(element) {
+        document.body.style.cursor = 'move';
+        element.x += CurrentMousePosition.x - LastMousePosition.x;
+        element.y += CurrentMousePosition.y - LastMousePosition.y;
+    }
 
-	function rotate(element) {
-		var speed = element.rotateSpeed;
+    function dragMouseUp(element) {
+        document.body.style.cursor = 'default';
+        LeftMouseDown = false;
+    }
 
-		if (RightMouseDown) {
-			element.rotation += speed;
-		} else if (MiddleMouseDown) {
-			element.rotation += speed * -1;
-		}
-	}
+    function rotate(element) {
+        var speed = element.rotateSpeed;
 
-	function drag(element) {
-		if (LeftMouseDown) {
-			dragMouseDown(element);
-		} else {
-			dragMouseUp(element);
-		}
-	}
+        if (RightMouseDown) {
+            element.rotation += speed;
+        } else if (MiddleMouseDown) {
+            element.rotation += speed * -1;
+        }
+    }
 
-	return {
-		MOUSE_BTN: MOUSE_BTN
-	};
+    function drag(element) {
+        if (LeftMouseDown) {
+            dragMouseDown(element);
+        } else {
+            dragMouseUp(element);
+        }
+    }
+
+    return {
+        MOUSE_BTN: MOUSE_BTN
+    };
 }
