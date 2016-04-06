@@ -20,7 +20,7 @@ setTimeout(function () {
 
 	for (var key in mapNames) {
 		var map = new Map({
-			imgPath: 'imgs/' + key + '/globo-com-fundo' + '.png',
+			imgPath: 'imgs/' + key + '/globo-com-fundo.png',
 			key: key
 		});
 
@@ -47,7 +47,7 @@ setTimeout(function () {
 	GameON.add(mainMenuWrapper);
 
 	var mainTitle = new DisplayText({
-		txt: "Dança dos Continentes"
+		txt: "DanÃ§a dos Continentes"
 	});
 
 	mainTitle.setSize(5);
