@@ -1,102 +1,143 @@
 setTimeout(function () {
 
-	var pieceNames = Piece.prototype.NAMES;
+    GameON._debug = true;
 
-	var mapNames = Map.prototype.NAMES;
+    var pieceNames = Piece.prototype.NAMES;
 
-	var maps = {};
-	var pieces = [];
+    var mapNames = Map.prototype.NAMES;
 
-	var pieceWrapper = new Element();
-	pieceWrapper.visible = false;
-	pieceWrapper.z = 10;
+    var maps = {};
+    var pieces = [];
 
-	var gameWrapper = new Element();
-	gameWrapper.add(pieceWrapper);
+    var pieceWrapper = new Element();
+    pieceWrapper.visible = false;
+    pieceWrapper.z = 10;
 
-	GameON.add(gameWrapper);
+    var gameWrapper = new Element();
+    gameWrapper.add(pieceWrapper);
 
-	var scale = (GameON.Camera.w * 0.9) / 457;
+    GameON.add(gameWrapper);
 
-	for (var key in mapNames) {
-		var map = new Map({
-			imgPath: 'imgs/' + key + '/globo-com-fundo.png',
-			key: key
-		});
+    var scale = (GameON.Camera.w * 0.9) / 457;
 
-		maps[key] = map;
-		gameWrapper.add(map);
-		map.setScale(scale);
-		map.z = 0;
-	}
+    for (var key in mapNames) {
+        var map = new Map({
+            imgPath: 'imgs/' + key + '/globo-com-fundo.png',
+            key: key
+        });
 
-	for (var i = 0; i < pieceNames.length; i++) {
-		var square = new Piece({
-			imgPath: 'imgs/pecas/' + pieceNames[i] + '.png'
-		});
+        maps[key] = map;
+        gameWrapper.add(map);
+        map.setScale(scale);
+        map.z = 0;
+    }
 
-		square.name = pieceNames[i];
+    for (var i = 0; i < pieceNames.length; i++) {
+        var square = new Piece({
+            imgPath: 'imgs/pecas/' + pieceNames[i] + '.png'
+        });
 
-		square.setScale(scale);
+        square.name = pieceNames[i];
 
-		pieces.push(square);
-		pieceWrapper.add(square);
-	}
+        square.setScale(scale);
 
-	var mainMenuWrapper = new Element();
-	GameON.add(mainMenuWrapper);
+        pieces.push(square);
+        pieceWrapper.add(square);
+    }
 
-	var mainTitle = new DisplayText({
-		txt: "Dança dos Continentes"
-	});
+    var mainMenuWrapper = new Element();
+    GameON.add(mainMenuWrapper);
 
-	mainTitle.setSize(5);
+    var mainTitle = new DisplayText({
+        txt: "Dança dos Continentes"
+    });
 
-	mainTitle.setPosition(0, 42.5);
+    mainTitle.setSize(5);
 
-	mainMenuWrapper.add(mainTitle);
+    mainTitle.setPosition(0, 42.5);
 
-	var idx = 0;
-	var mapOptionStart = 20;
-	var mapOptionSize = 5;
+    mainMenuWrapper.add(mainTitle);
 
-	for (var key in mapNames) {
-		var link = new ClickableText({
-			txt: mapNames[key]
-		});
+    var idx = 0;
+    var mapOptionStart = 20;
+    var mapOptionSize = 5;
 
-		link._key = key;
+    for (var key in mapNames) {
+        var link = new ClickableText({
+            txt: mapNames[key]
+        });
 
-		link.setSize(mapOptionSize);
+        link._key = key;
 
-		link.setPosition(0, mapOptionStart + idx * -mapOptionSize);
+        link.setSize(mapOptionSize);
 
-		idx += 1.5;
+        link.setPosition(0, mapOptionStart + idx * -mapOptionSize);
 
-		link.clickCallback = function () {
-			var key = this._key;
+        idx += 1.5;
 
-			var map = maps[key];
+        link.clickCallback = function () {
+            var key = this._key;
 
-			for (var i = pieces.length - 1; i >= 0; i--) {
-				pieces[i].initForGameplay(map);
-			}
+            var map = maps[key];
 
-			map.initForGameplay(function endGameCallback() {
-				this.visible = false;
-				pieceWrapper.visible = false;
-				mainMenuWrapper.visible = true;
-			});
+            for (var i = pieces.length - 1; i >= 0; i--) {
+                pieces[i].initForGameplay(map);
+            }
 
-			pieceWrapper.visible = true;
-			mainMenuWrapper.visible = false;
-		};
+            map.initForGameplay(function endGameCallback() {
+                this.visible = false;
+                pieceWrapper.visible = false;
+                mainMenuWrapper.visible = true;
+            });
 
-		mainMenuWrapper.add(link);
-	}
+            pieceWrapper.visible = true;
+            mainMenuWrapper.visible = false;
+        };
 
-	GameON._debug = true;
+        mainMenuWrapper.add(link);
+    }
 
-	GameON.start();
+    if (GameON._debug) {
+        window.printPieceTarget = function printPieceTarget() {
+            var target = {};
+            for (var i = 0; i < pieces.length; i++) {
+                var p = pieces[i];
+                target[p.name] = {};
+                target[p.name].x = p.x / GameON.Canvas.w;
+                target[p.name].y = p.y / GameON.Canvas.h;
+                var rot = (p.rotation % (Math.PI * 2)) / (Math.PI * 2)
+                if (rot < 0) {
+                    rot += 1;
+                }
+                target[p.name].rot = rot;
+            }
+            console.log(JSON.stringify(target));
+        };
+
+        window.snapAll = function snapAll() {
+            for (var i = 0; i < pieces.length; i++) {
+                var p = pieces[i];
+                p.toSnapPosition();
+            }
+        };
+
+        window.snapPositionById = function snapPositionById(id) {
+            var p = null;
+
+            for (var i = 0; i < pieces.length && p === null; i++) {
+                if (pieces[i].name === id) {
+                    p = pieces[i];
+                }
+            }
+
+            if (p !== null) {
+                p.toSnapPosition();
+            }
+        };
+
+        window.pieces = pieces;
+    }
+
+    GameON.start();
 
 }, 100);
