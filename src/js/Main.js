@@ -154,4 +154,4 @@ setTimeout(function () {
 
     GameON.start();
 
-}, 3000);
+}, 1);

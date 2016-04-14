@@ -6,6 +6,9 @@ function CanvasInterfaceImpl() {
 	document.body.style.margin = '0';
 
 	this.mainCanvas = document.createElement('canvas');
+        
+        this.mainCanvas.style.position = 'absolute';
+        
 	this.ctx = this.mainCanvas.getContext('2d');
 
 	this.w = this.mainCanvas.width = window.innerWidth;

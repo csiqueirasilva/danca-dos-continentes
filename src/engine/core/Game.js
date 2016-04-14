@@ -1,80 +1,88 @@
 var GameON = (function () {
 
-	function Game(ops) {
-		ops = ops || {};
-		Element.apply(this, arguments);
+    function Game(ops) {
+        ops = ops || {};
 
-		this.Canvas = new CanvasInterfaceImpl();
+        this.Camera = new Camera();
 
-		this.Camera = new Camera();
+        var nLayers = ops.nLayers || 1;
 
-		this.Camera.w = this.Canvas.w;
-		this.Camera.h = this.Canvas.h;
+        if (nLayers < 0) {
+            nLayers = 1;
+        }
 
-		this.Mouse = new Mouse(this.Canvas.mainCanvas, this.Camera, this._children);
-		this.add(this.Mouse.CollisionLine);
+        this._layers = [];
 
-		this._debug = ops.debug || false;
-	}
+        for (var i = 0; i < nLayers; i++) {
+            var l = new Layer({
+                camera: this.Camera
+            });
+            this._layers.push(l);
+        }
 
-	Game.prototype = Object.create(Element.prototype);
+        this.Canvas = this._layers[0].Canvas;
 
-	Game.prototype.draw = function () {
+        this.Mouse = new Mouse(this.Canvas.mainCanvas, this.Camera, this._layers[0]._children);
 
-		this.x = this.Camera.w / 2;
-		this.y = this.Camera.h / 2;
+        this._debug = ops.debug || false;
+    }
 
-		return true;
-	};
+    Game.prototype.add = function (element) {
+        this._layers[0].add(element);
+    };
 
-	Game.prototype.start = function () {
+    Game.prototype.remove = function (element) {
+        this._layers[0].remove(element);
+    };
 
-		function animate() {
-			GameON.Canvas.clear();
-			GameON.drawElement(GameON);			
-			requestAnimationFrame(animate);
-		}
+    Game.prototype.start = function () {
 
-		animate();
-	};
+        function animate() {
+            GameON.Canvas.clear();
+            GameON.drawElement(GameON._layers[0]);
+            requestAnimationFrame(animate);
+        }
 
-	Game.prototype.drawElement = function (element) {
-		if (element.draw(this.Canvas.ctx)) {
-			this.Canvas.setElementPosition(element, this.Camera);
+        animate();
+    };
 
-			// should check if it is on camera's frame
-			this.Canvas.drawByType(element);
+    Game.prototype.drawElement = function (element) {
+        if (element.draw(this.Canvas.ctx)) {
+            this.Canvas.setElementPosition(element, this.Camera);
 
-			if (this._debug) {
-				this.Canvas.drawBoundingRect(element._ndc);
-			}
+            // should check if it is on camera's frame
+            this.Canvas.drawByType(element);
 
-			this.Canvas.restoreElementPosition();
+            if (this._debug) {
+                this.Canvas.drawBoundingRect(element._ndc);
+            }
 
-			this.drawElementCollection(element._children);
-		}
-	};
+            this.Canvas.restoreElementPosition();
 
-	Game.prototype.drawElementCollection = function (elementCollection) {
-		for (var key in elementCollection) {
-			var zElements = elementCollection[key];
-			for (var i = 0; i < zElements.length; i++) {
-				if (zElements[i].visible) {
-					this.drawElement(zElements[i]);
-				}
-			}
-		}
-	};
+            this.drawElementCollection(element._children);
+        }
+    };
 
-	var GameInstance = new Game();
+    Game.prototype.drawElementCollection = function (elementCollection) {
+        for (var key in elementCollection) {
+            var zElements = elementCollection[key];
+            for (var i = 0; i < zElements.length; i++) {
+                if (zElements[i].visible) {
+                    this.drawElement(zElements[i]);
+                }
+            }
+        }
+    };
 
-	var resizeInterval = window.setInterval(function () {
-		if (GameInstance.Canvas.w !== window.innerWidth || GameInstance.Canvas.h !== window.innerHeight) {
-			GameInstance.Camera.w = GameInstance.Canvas.w = GameInstance.Canvas.mainCanvas.width = window.innerWidth;
-			GameInstance.Camera.h = GameInstance.Canvas.h = GameInstance.Canvas.mainCanvas.height = window.innerHeight;
-		}
-	}, 300);
+    var GameInstance = new Game();
 
-	return GameInstance;
+    var resizeInterval = window.setInterval(function () {
+        if (GameInstance.Canvas.w !== window.innerWidth || GameInstance.Canvas.h !== window.innerHeight) {
+            GameInstance.Camera.w = GameInstance.Canvas.w = GameInstance.Canvas.mainCanvas.width = window.innerWidth;
+            GameInstance.Camera.h = GameInstance.Canvas.h = GameInstance.Canvas.mainCanvas.height = window.innerHeight;
+        }
+    }, 300);
+
+    return GameInstance;
 
 })();
