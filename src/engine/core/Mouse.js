@@ -1,4 +1,4 @@
-function Mouse(canvas, camera, elements) {
+function Mouse(canvas, camera, layers) {
 
     /* Mouse click */
     var CurrentMousePosition = {
@@ -25,6 +25,50 @@ function Mouse(canvas, camera, elements) {
     var LeftMouseDown = false;
     var MiddleMouseDown = false;
     var RightMouseDown = false;
+
+    /* general methods */
+
+    function checkTopElementInLayers(mouseX, mouseY) {
+        var topElement = null;
+        for (var i = layers.length - 1; i >= 0 && topElement === null; i--) {
+            topElement = checkTopElement(layers[i]._children, mouseX, mouseY);
+        }
+        return topElement;
+    }
+
+    function checkTopElement(collection, mouseX, mouseY) {
+
+        var topElement = null;
+
+        for (var key in collection) {
+            var zElements = collection[key];
+            for (var i = 0; i < zElements.length; i++) {
+                // needs to check if it is on camera's frame
+                if (zElements[i].visible) {
+
+                    if (zElements[i].mouseInteract) {
+
+                        var isInsideElement = zElements[i].isPointInside(mouseX, mouseY);
+
+                        if (isInsideElement) {
+                            topElement = zElements[i];
+                        }
+                    }
+
+                    var childTopElement = checkTopElement(zElements[i]._children, mouseX, mouseY);
+
+                    if (childTopElement !== null) {
+                        topElement = childTopElement;
+                    }
+
+                }
+            }
+        }
+
+        return topElement;
+    }
+
+    /* end of general methods */
 
     canvas.addEventListener('wheel', function (e) {
         var direction = (e.detail < 0 || e.wheelDelta > 0) ? 1 : -1;
@@ -70,39 +114,6 @@ function Mouse(canvas, camera, elements) {
         }
     });
 
-    /* Mouse over */
-
-    function checkTopElement(collection, mouseX, mouseY) {
-
-        var topElement = null;
-
-        for (var key in collection) {
-            var zElements = collection[key];
-            for (var i = 0; i < zElements.length; i++) {
-                // needs to check if it is on camera's frame
-                if (zElements[i].visible) {
-
-                    if (zElements[i].mouseInteract) {
-
-                        var isInsideElement = zElements[i].isPointInside(mouseX, mouseY);
-
-                        if (isInsideElement) {
-                            topElement = zElements[i];
-                        }
-                    }
-
-                    var childTopElement = checkTopElement(zElements[i]._children, mouseX, mouseY);
-
-                    if (childTopElement !== null) {
-                        topElement = childTopElement;
-                    }
-
-                }
-            }
-        }
-
-        return topElement;
-    }
 
     canvas.addEventListener('mousemove', function (e) {
         var mouseX = e.clientX / window.innerWidth - 0.5;
@@ -114,7 +125,7 @@ function Mouse(canvas, camera, elements) {
         CurrentMousePosition.x = mouseX;
         CurrentMousePosition.y = mouseY;
 
-        var topElement = checkTopElement(elements, mouseX, mouseY);
+        var topElement = checkTopElementInLayers(mouseX, mouseY);
 
         if (topElement && topElement.mouseMove instanceof Function) {
             topElement.mouseMove(mouseX, mouseY);

@@ -3,15 +3,19 @@ var GameON = (function () {
     function Game(ops) {
         ops = ops || {};
 
-        this.Camera = new Camera();
+        this._layers = [];
+
+        this._eventLayer = new EventLayer({
+            layers: this._layers
+        });
+
+        this.Camera = this._eventLayer.Camera;
 
         var nLayers = ops.nLayers || 1;
 
         if (nLayers < 0) {
             nLayers = 1;
         }
-
-        this._layers = [];
 
         for (var i = 0; i < nLayers; i++) {
             var l = new Layer({
@@ -22,7 +26,7 @@ var GameON = (function () {
 
         this.Canvas = this._layers[0].Canvas;
 
-        this.Mouse = new Mouse(this.Canvas.mainCanvas, this.Camera, this._layers[0]._children);
+        this.Mouse = this._eventLayer.Mouse;
 
         this._debug = ops.debug || false;
     }
