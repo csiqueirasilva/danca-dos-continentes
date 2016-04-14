@@ -80,6 +80,12 @@ var GameON = (function () {
         if (GameInstance.Canvas.w !== window.innerWidth || GameInstance.Canvas.h !== window.innerHeight) {
             GameInstance.Camera.w = GameInstance.Canvas.w = GameInstance.Canvas.mainCanvas.width = window.innerWidth;
             GameInstance.Camera.h = GameInstance.Canvas.h = GameInstance.Canvas.mainCanvas.height = window.innerHeight;
+
+            for (var i = 0; i < GameInstance._layers.length; i++) {
+                var layer = GameInstance._layers[i];
+                layer.x = GameInstance.Camera.w / 2;
+                layer.y = GameInstance.Camera.h / 2;
+            }
         }
     }, 300);
 
