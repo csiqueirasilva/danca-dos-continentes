@@ -11,10 +11,11 @@ function Layer(ops) {
 
     this.x = this.Camera.w / 2;
     this.y = this.Camera.h / 2;
+    
+    this._domElement = this.Canvas.mainCanvas;
 }
 
 Layer.prototype = Object.create(Element.prototype);
-
 
 Layer.prototype.draw = function () {
     return true;
