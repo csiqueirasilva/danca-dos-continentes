@@ -1,6 +1,14 @@
-setTimeout(function () {
+function GameInstance(ops) {
+    ops = ops || {};
 
-    GameON._debug = false;
+    ops.debug = true;
+    ops.nLayers = 3;
+
+    Game.apply(this, [ops]);
+
+    this._layers[0].autoUpdate = false;
+    this._layers[1].autoUpdate = true;
+    this._layers[2].autoUpdate = true;
 
     var pieceNames = Piece.prototype.NAMES;
 
@@ -13,12 +21,12 @@ setTimeout(function () {
     pieceWrapper.visible = false;
     pieceWrapper.z = 10;
 
-    var gameWrapper = new Element();
-    gameWrapper.add(pieceWrapper);
+    var backgroundWrapper = new Element();
 
-    GameON.add(gameWrapper);
+    this.addToPieceLayer(pieceWrapper);
+    this.addToBackgroundLayer(backgroundWrapper);
 
-    var scale = (GameON.Camera.w * 0.9) / 457;
+    var scale = (this.Camera.w * 0.9) / 457;
 
     for (var key in mapNames) {
         var map = new Map({
@@ -27,7 +35,7 @@ setTimeout(function () {
         });
 
         maps[key] = map;
-        gameWrapper.add(map);
+        backgroundWrapper.add(map);
         map.setScale(scale);
         map.z = 0;
     }
@@ -46,7 +54,7 @@ setTimeout(function () {
     }
 
     var mainMenuWrapper = new Element();
-    GameON.add(mainMenuWrapper);
+    this.addToUILayer(mainMenuWrapper);
 
     var mainTitle = new DisplayText({
         txt: "Dança dos Continentes"
@@ -91,16 +99,18 @@ setTimeout(function () {
                 var gameOverText = new GameOverText({
                     map: bg
                 });
-                
-                GameON.add(gameOverText);
+
+                GameInstance.addToUILayer(gameOverText);
 
                 setTimeout(function () {
-                    GameON.remove(gameOverText);
+                    GameInstance.removeFromUILayer(gameOverText);
                     delete gameOverText;
 
                     bg.visible = false;
                     pieceWrapper.visible = false;
                     mainMenuWrapper.visible = true;
+                    
+                    GameInstance.redrawBackgroundLayer();
                 }, 5000);
             });
 
@@ -111,14 +121,14 @@ setTimeout(function () {
         mainMenuWrapper.add(link);
     }
 
-    if (GameON._debug) {
+    if (this._debug) {
         window.printPieceTarget = function printPieceTarget() {
             var target = {};
             for (var i = 0; i < pieces.length; i++) {
                 var p = pieces[i];
                 target[p.name] = {};
-                target[p.name].x = p.x / GameON.Canvas.w;
-                target[p.name].y = p.y / GameON.Canvas.h;
+                target[p.name].x = p.x / this.Canvas.w;
+                target[p.name].y = p.y / this.Canvas.h;
                 var rot = (p.rotation % (Math.PI * 2)) / (Math.PI * 2)
                 if (rot < 0) {
                     rot += 1;
@@ -150,8 +160,39 @@ setTimeout(function () {
         };
 
         window.pieces = pieces;
+        this._startDelay = 1;
+    } else {
+        this._startDelay = 3000;
     }
+}
 
-    GameON.start();
+GameInstance.prototype = Object.create(Game.prototype);
 
-}, 1);
+GameInstance.prototype.addToUILayer = function (element) {
+    this._layers[2].add(element);
+};
+
+GameInstance.prototype.addToPieceLayer = function (element) {
+    this._layers[1].add(element);
+};
+
+GameInstance.prototype.addToBackgroundLayer = function (element) {
+    this._layers[0].add(element);
+};
+
+GameInstance.prototype.removeFromUILayer = function (element) {
+    this._layers[2].remove(element);
+};
+
+GameInstance.prototype.removeFromPieceLayer = function (element) {
+    this._layers[1].remove(element);
+};
+
+GameInstance.prototype.removeFromBackgroundLayer = function (element) {
+    this._layers[0].remove(element);
+};
+
+GameInstance.prototype.redrawBackgroundLayer = function (element) {
+    this._layers[0].Canvas.clear();
+    this._layers[0].drawElement(this._layers[0]);
+};

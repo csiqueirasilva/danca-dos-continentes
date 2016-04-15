@@ -55,7 +55,7 @@ CanvasInterfaceImpl.prototype.setElementPosition = function setElementPosition(e
 	
 	this.ctx.save();
 	
-	this.ctx.translate(ndc.pos.x + ndc.size.x / 2, GameON.Camera.h - (ndc.pos.y + ndc.size.y / 2));
+	this.ctx.translate(ndc.pos.x + ndc.size.x / 2, GameInstance.Camera.h - (ndc.pos.y + ndc.size.y / 2));
 	this.ctx.rotate(element.rotation);
 	this.ctx.scale(element.scaleW, element.scaleH);
 };
@@ -94,11 +94,11 @@ CanvasInterfaceImpl.prototype.drawImage = function drawImage(element) {
 };
 
 CanvasInterfaceImpl.prototype.drawLine = function drawLine(element) {
-	var sx = (element.sx / GameON.Camera.w) * this.w;
-	var sy = -(element.sy / GameON.Camera.h) * this.h;
+	var sx = (element.sx / GameInstance.Camera.w) * this.w;
+	var sy = -(element.sy / GameInstance.Camera.h) * this.h;
 
-	var ex = (element.ex / GameON.Camera.w) * this.w;
-	var ey = -(element.ey / GameON.Camera.h) * this.h;
+	var ex = (element.ex / GameInstance.Camera.w) * this.w;
+	var ey = -(element.ey / GameInstance.Camera.h) * this.h;
 
 	this.ctx.strokeStyle = 'rgb(' + element.color.r + ', ' + element.color.g + ', ' + element.color.b + ')';
 	this.ctx.beginPath();

@@ -57,6 +57,7 @@ Map.prototype.initForGameplay = function (endGameCallback) {
         throw "Undefined end game callback";
     }
     this._endGameCallback = endGameCallback;
+    GameInstance.redrawBackgroundLayer();
 };
 
 Map.prototype.getPieceTarget = function getPieceTarget(pieceName) {

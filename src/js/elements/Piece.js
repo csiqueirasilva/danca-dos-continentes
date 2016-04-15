@@ -30,7 +30,7 @@ Piece.prototype.zLevelSnapped = 8;
 
 Piece.prototype.rotationAngle = 6 * Math.PI / 180;
 
-Piece.prototype.snapRadius = (16 / Math.sqrt(1920 * 1920 + 1080 * 1080)) * Math.sqrt(GameON.Canvas.w * GameON.Canvas.w + GameON.Canvas.h * GameON.Canvas.h);
+Piece.prototype.snapRadius = (16 / Math.sqrt(1920 * 1920 + 1080 * 1080)) * Math.sqrt(window.innerWidth * window.innerWidth + window.innerHeight * window.innerHeight);
 
 Piece.prototype.snapRotation = 0.0333;
 
@@ -145,15 +145,15 @@ Piece.prototype.initForGameplay = function (map) {
     
     var targetReference = map.getPieceTarget(this.name);
     
-    this.target.x = targetReference.x * GameON.Canvas.w;
-    this.target.y = targetReference.y * GameON.Canvas.h;
+    this.target.x = targetReference.x * GameInstance.Camera.w;
+    this.target.y = targetReference.y * GameInstance.Camera.h;
     this.target.rawrot = targetReference.rot;
     this.target.rot = this.target.rawrot * Math.PI * 2;
     
     this.setZIndex(Piece.prototype.zLevelUnsnapped);
     this.snapped = false;
-    this.x = (Math.random() * 0.8 - 0.4) * GameON.Camera.w;
-    this.y = (Math.random() * 0.8 - 0.4) * GameON.Camera.h;
+    this.x = (Math.random() * 0.8 - 0.4) * GameInstance.Camera.w;
+    this.y = (Math.random() * 0.8 - 0.4) * GameInstance.Camera.h;
     this.rotation = Piece.prototype.rotationAngle * parseInt(Math.random() * 100);
     this.visible = true;
 };
