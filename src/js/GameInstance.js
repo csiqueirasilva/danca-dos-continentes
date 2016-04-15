@@ -168,7 +168,7 @@ function GameInstance(ops) {
         window.pieces = pieces;
         this._startDelay = 1;
     } else {
-        this._startDelay = 3000;
+        this._startDelay = 300;
     }
 }
 
