@@ -19,16 +19,24 @@ function Layer(ops) {
 
 Layer.prototype = Object.create(Element.prototype);
 
-Layer.prototype.draw = function () {
+Layer.prototype.draw = function (ctx) {
     return true;
 };
 
 Layer.prototype.drawElement = function (element) {
-    if (element.draw(this.Canvas.ctx)) {
+    if (element.draw()) {
         this.Canvas.setElementPosition(element, this.Camera);
+
+        if(element.beforeDraw instanceof Function) {
+            element.beforeDraw(this.Canvas.ctx);
+        }
 
         // should check if it is on camera's frame
         this.Canvas.drawByType(element);
+        
+        if(element.afterDraw instanceof Function) {
+            element.afterDraw(this.Canvas.ctx);
+        }
 
         if (GameInstance._debug) {
             this.Canvas.drawBoundingRect(element._ndc);

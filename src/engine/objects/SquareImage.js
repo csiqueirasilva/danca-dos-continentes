@@ -32,7 +32,7 @@ function SquareImage(ops) {
 
 SquareImage.prototype = Object.create(Square.prototype);
 
-SquareImage.prototype.draw = function () {
+SquareImage.prototype.draw = function (ctx) {
 	return this.ready;
 };
 

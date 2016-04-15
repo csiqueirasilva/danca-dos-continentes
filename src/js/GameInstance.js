@@ -6,9 +6,13 @@ function GameInstance(ops) {
 
     Game.apply(this, [ops]);
 
-    this._layers[0].autoUpdate = false;
-    this._layers[1].autoUpdate = true;
-    this._layers[2].autoUpdate = true;
+    this.BackgroundLayer = this._layers[0];
+    this.PieceLayer = this._layers[1];
+    this.UILayer = this._layers[2];
+
+    this.BackgroundLayer.autoUpdate = false;
+    this.PieceLayer.autoUpdate = true;
+    this.UILayer.autoUpdate = true;
 
     var pieceNames = Piece.prototype.NAMES;
 
@@ -42,7 +46,8 @@ function GameInstance(ops) {
 
     for (var i = 0; i < pieceNames.length; i++) {
         var square = new Piece({
-            imgPath: 'imgs/pecas/' + pieceNames[i] + '.png'
+            defaultImgPath: 'imgs/pecas/' + pieceNames[i] + '.png',
+            snappedImgPath: 'imgs/pecas/hover-' + pieceNames[i] + '.png'
         });
 
         square.name = pieceNames[i];
@@ -109,7 +114,7 @@ function GameInstance(ops) {
                     bg.visible = false;
                     pieceWrapper.visible = false;
                     mainMenuWrapper.visible = true;
-                    
+
                     GameInstance.redrawBackgroundLayer();
                 }, 5000);
             });
@@ -169,30 +174,30 @@ function GameInstance(ops) {
 GameInstance.prototype = Object.create(Game.prototype);
 
 GameInstance.prototype.addToUILayer = function (element) {
-    this._layers[2].add(element);
+    this.UILayer.add(element);
 };
 
 GameInstance.prototype.addToPieceLayer = function (element) {
-    this._layers[1].add(element);
+    this.PieceLayer.add(element);
 };
 
 GameInstance.prototype.addToBackgroundLayer = function (element) {
-    this._layers[0].add(element);
+    this.BackgroundLayer.add(element);
 };
 
 GameInstance.prototype.removeFromUILayer = function (element) {
-    this._layers[2].remove(element);
+    this.UILayer.remove(element);
 };
 
 GameInstance.prototype.removeFromPieceLayer = function (element) {
-    this._layers[1].remove(element);
+    this.PieceLayer.remove(element);
 };
 
 GameInstance.prototype.removeFromBackgroundLayer = function (element) {
-    this._layers[0].remove(element);
+    this.BackgroundLayer.remove(element);
 };
 
 GameInstance.prototype.redrawBackgroundLayer = function (element) {
-    this._layers[0].Canvas.clear();
-    this._layers[0].drawElement(this._layers[0]);
+    this.BackgroundLayer.Canvas.clear();
+    this.BackgroundLayer.drawElement(this._layers[0]);
 };

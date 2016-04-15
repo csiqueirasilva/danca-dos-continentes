@@ -82,7 +82,7 @@ Element.prototype.isChild = function (element) {
     return element instanceof Element && this._children[element.z] instanceof Array && this._children[element.z].indexOf(element) !== -1;
 };
 
-Element.prototype.draw = function () {
+Element.prototype.draw = function (ctx) {
     return true;
 };
 

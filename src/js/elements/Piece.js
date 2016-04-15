@@ -1,9 +1,18 @@
 function Piece(ops) {
     ops = ops || {};
-    SquareImage.apply(this, arguments);
+    ops.imgPath = ops.defaultImgPath;
+    SquareImage.apply(this, [ops]);
+    
+    this.defaultImgPath = ops.defaultImgPath;
+    this.snappedImgPath = ops.snappedImgPath;
+    
     this.target = {x: 0, y: 0};
     this.snapped = false;
     this.visible = false;
+
+    this.color.r = 255;
+    this.color.g = 255;
+    this.color.b = 0;
 }
 
 Piece.prototype = Object.create(SquareImage.prototype);
@@ -97,6 +106,7 @@ Piece.prototype.toSnapPosition = function () {
 };
 
 Piece.prototype.snap = function () {
+    this.img.src = this.snappedImgPath;
     this.snapped = true;
     this.draggable = false;
     this.setZIndex(Piece.prototype.zLevelSnapped);
@@ -142,18 +152,21 @@ Piece.prototype.initForGameplay = function (map) {
     }
 
     this._map = map;
-    
+
     var targetReference = map.getPieceTarget(this.name);
-    
+
     this.target.x = targetReference.x * GameInstance.Camera.w;
     this.target.y = targetReference.y * GameInstance.Camera.h;
     this.target.rawrot = targetReference.rot;
     this.target.rot = this.target.rawrot * Math.PI * 2;
-    
+
+    this.img.src = this.defaultImgPath;
+
     this.setZIndex(Piece.prototype.zLevelUnsnapped);
     this.snapped = false;
     this.x = (Math.random() * 0.8 - 0.4) * GameInstance.Camera.w;
     this.y = (Math.random() * 0.8 - 0.4) * GameInstance.Camera.h;
     this.rotation = Piece.prototype.rotationAngle * parseInt(Math.random() * 100);
     this.visible = true;
+    
 };
