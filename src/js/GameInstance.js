@@ -1,7 +1,8 @@
 function GameInstance(ops) {
     ops = ops || {};
 
-    ops.debug = true;
+    ops.debug = false;
+    
     ops.nLayers = 3;
 
     Game.apply(this, [ops]);
