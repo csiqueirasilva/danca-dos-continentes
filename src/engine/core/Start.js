@@ -26,4 +26,9 @@ var resizeInterval = window.setInterval(function () {
 
 setTimeout(function () {
     GameInstance.start();
+    
+    if(GameInstance._afterStart instanceof Function) {
+       GameInstance._afterStart(); 
+    }
+    
 }, GameInstance._startDelay || 500);

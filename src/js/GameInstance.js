@@ -1,16 +1,24 @@
 function GameInstance(ops) {
     ops = ops || {};
 
-    ops.debug = false;
-    
-    ops.nLayers = 3;
+    ops.debug = true;
+
+    ops.nLayers = 4;
 
     Game.apply(this, [ops]);
 
-    this.BackgroundLayer = this._layers[0];
-    this.PieceLayer = this._layers[1];
-    this.UILayer = this._layers[2];
+    this.BackgroundImageLayer = this._layers[0];
+    this.BackgroundLayer = this._layers[1];
+    this.PieceLayer = this._layers[2];
+    this.UILayer = this._layers[3];
 
+    this.GAME_WIDTH = 800;
+    this.GAME_HEIGHT = 450;
+
+    var backgroundScaleW = this.Camera.w / 800;
+    var backgroundScaleH = this.Camera.h / 450;
+
+    this.BackgroundImageLayer.autoUpdate = true;
     this.BackgroundLayer.autoUpdate = false;
     this.PieceLayer.autoUpdate = true;
     this.UILayer.autoUpdate = true;
@@ -127,6 +135,29 @@ function GameInstance(ops) {
         mainMenuWrapper.add(link);
     }
 
+    // add main background image
+    var backgroundImage = new SquareImage({
+        imgPath: 'imgs/ui/fundo-danca-textura.jpg'
+    });
+
+    backgroundImage.afterDraw = function () {
+        GameInstance.BackgroundImageLayer.autoUpdate = false;
+    };
+
+    this.BackgroundImageLayer.add(backgroundImage);
+
+    backgroundImage.scaleW = backgroundScaleW;
+    backgroundImage.scaleH = backgroundScaleH;
+    
+    var menuImage = new SquareImage({
+        imgPath: 'imgs/ui/menu-tela-inicial.png'
+    });
+
+    menuImage.scaleW = backgroundScaleW;
+    menuImage.scaleH = backgroundScaleH;
+    
+    mainMenuWrapper.add(menuImage);
+
     if (this._debug) {
         window.printPieceTarget = function printPieceTarget() {
             var target = {};
@@ -200,5 +231,5 @@ GameInstance.prototype.removeFromBackgroundLayer = function (element) {
 
 GameInstance.prototype.redrawBackgroundLayer = function (element) {
     this.BackgroundLayer.Canvas.clear();
-    this.BackgroundLayer.drawElement(this._layers[0]);
+    this.BackgroundLayer.drawElement(this.BackgroundLayer);
 };
