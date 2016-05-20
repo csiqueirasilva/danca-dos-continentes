@@ -18,6 +18,11 @@ function Element() {
     this._ndc = {pos: {x: 0, y: 0}, size: {x: 0, y: 0}};
 }
 
+Element.prototype.setPosition = function (x, y) {
+    this.x = (x / 100) * GameInstance.Camera.w;
+    this.y = (y / 100) * GameInstance.Camera.h;
+};
+
 Element.prototype.updateNDC = function (ndc) {
     if (this._parent !== null) {
         this._ndc.pos.x = ndc.pos.x + this._parent._ndc.pos.x;

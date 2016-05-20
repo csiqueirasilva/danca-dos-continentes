@@ -19,11 +19,6 @@ DisplayText.prototype.setSize = function (n) {
     this.h = (n / 100) * GameInstance.Camera.h;
 };
 
-DisplayText.prototype.setPosition = function (x, y) {
-    this.x = (x / 100) * GameInstance.Camera.w;
-    this.y = (y / 100) * GameInstance.Camera.h;
-};
-
 DisplayText.prototype.draw = function () {
     return true;
 };

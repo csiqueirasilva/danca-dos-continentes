@@ -135,27 +135,52 @@ function GameInstance(ops) {
         mainMenuWrapper.add(link);
     }
 
+    var totalFixedBackgroundAssets = 2;
+
     // add main background image
     var backgroundImage = new SquareImage({
         imgPath: 'imgs/ui/fundo-danca-textura.jpg'
     });
 
-    backgroundImage.afterDraw = function () {
-        GameInstance.BackgroundImageLayer.autoUpdate = false;
-    };
+    this.BackgroundImageLayer._assetsLoaded = 0;
+
+    function BackgroundImageLayerLoadCallback() {
+        if (!this._drawn) {
+            if (++GameInstance.BackgroundImageLayer._assetsLoaded === totalFixedBackgroundAssets) {
+                GameInstance.BackgroundImageLayer.autoUpdate = false;
+            }
+            this._drawn = true;
+        }
+    }
+
+    backgroundImage.afterDraw = BackgroundImageLayerLoadCallback;
 
     this.BackgroundImageLayer.add(backgroundImage);
 
     backgroundImage.scaleW = backgroundScaleW;
     backgroundImage.scaleH = backgroundScaleH;
-    
+
+    // add main background image
+    var gameLogoImage = new SquareImage({
+        imgPath: 'imgs/ui/titulo-danca-continentes.png'
+    });
+
+    gameLogoImage.setPosition(0, 20);
+
+    gameLogoImage.afterDraw = BackgroundImageLayerLoadCallback;
+
+    this.BackgroundImageLayer.add(gameLogoImage);
+
+    gameLogoImage.scaleW = backgroundScaleW;
+    gameLogoImage.scaleH = backgroundScaleH;
+
     var menuImage = new SquareImage({
         imgPath: 'imgs/ui/menu-tela-inicial.png'
     });
 
     menuImage.scaleW = backgroundScaleW;
     menuImage.scaleH = backgroundScaleH;
-    
+
     mainMenuWrapper.add(menuImage);
 
     if (this._debug) {
