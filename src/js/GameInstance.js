@@ -165,7 +165,7 @@ function GameInstance(ops) {
         imgPath: 'imgs/ui/titulo-danca-continentes.png'
     });
 
-    gameLogoImage.setPosition(0, 20);
+    gameLogoImage.setPosition(0, 44.5);
 
     gameLogoImage.afterDraw = BackgroundImageLayerLoadCallback;
 
