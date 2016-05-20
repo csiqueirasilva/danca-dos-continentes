@@ -19,6 +19,13 @@ Map.prototype.NAMES = {
     'rodinia': 'Rodínia'
 };
 
+Map.prototype.MAIN_MENU_REF = {
+    'rodinia': {x: -21, y: 15.25, w: 0.333, h: 0.35},
+    'atual': {x: 23.5, y: -20.5, w: 0.312, h: 0.34},
+    'pangeia': {x: -14, y: -21.5, w: 0.32, h: 0.35},
+    'futuro': {x: 17.25, y: 17.75, w: 0.31, h: 0.35}
+};
+
 (function () {
 
     function loadData(val) {

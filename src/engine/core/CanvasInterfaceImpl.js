@@ -67,7 +67,7 @@ CanvasInterfaceImpl.prototype.restoreElementPosition = function () {
 CanvasInterfaceImpl.prototype.drawRect = function drawRect(element) {
     var ndc = element._ndc;
 
-    this.ctx.fillStyle = 'rgb(' + element.color.r + ', ' + element.color.g + ', ' + element.color.b + ')';
+    this.ctx.fillStyle = 'rgba(' + element.color.r + ', ' + element.color.g + ', ' + element.color.b + ', ' + element.color.a + ')';
     this.ctx.rect(-ndc.size.x / 2, -ndc.size.y / 2, ndc.size.x, ndc.size.y);
     this.ctx.fill();
 };

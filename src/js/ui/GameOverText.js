@@ -6,25 +6,18 @@ function GameOverText(ops) {
         throw "GameOverText not initialized without a map reference";
     }
 
-    var gameOverTopText = new DisplayText({
-        txt: "VOCÊ COMPLETOU: " + ops.map.getName().toLocaleUpperCase()
-    });
-
     var gameOverBottomText = new DisplayText({
-        txt: "OBRIGADO POR JOGAR!"
+        txt: "VOCÊ COMPLETOU: " + ops.map.getName().toLocaleUpperCase() + " - OBRIGADO POR JOGAR!",
+        r: 255,
+        g: 255,
+        b: 255
     });
-
-    this.add(gameOverTopText);
-
-    gameOverTopText.setSize(this.TEXT_SIZE);
-    gameOverTopText.setPosition(0, this.POSITION_Y);
 
     this.add(gameOverBottomText);
 
     gameOverBottomText.setSize(this.TEXT_SIZE);
     gameOverBottomText.setPosition(0, -this.POSITION_Y);
     
-    this.top = gameOverTopText;
     this.bottom = gameOverBottomText;
     
     this.z = 1000;

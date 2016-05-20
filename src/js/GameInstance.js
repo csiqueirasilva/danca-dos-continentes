@@ -1,7 +1,7 @@
 function GameInstance(ops) {
     ops = ops || {};
 
-    ops.debug = true;
+    ops.debug = false;
 
     ops.nLayers = 4;
 
@@ -70,32 +70,26 @@ function GameInstance(ops) {
     var mainMenuWrapper = new Element();
     this.addToUILayer(mainMenuWrapper);
 
-    var mainTitle = new DisplayText({
-        txt: "Dança dos Continentes"
-    });
+    var squareClickRefs = Map.prototype.MAIN_MENU_REF;
 
-    mainTitle.setSize(5);
+    for (var key in squareClickRefs) {
 
-    mainTitle.setPosition(0, 42.5);
+        var clickRef = squareClickRefs[key];
 
-    mainMenuWrapper.add(mainTitle);
-
-    var idx = 0;
-    var mapOptionStart = 20;
-    var mapOptionSize = 5;
-
-    for (var key in mapNames) {
-        var link = new ClickableText({
-            txt: mapNames[key]
+        var link = new ClickableSquare({
+            w: clickRef.w * this.Camera.w,
+            h: clickRef.h * this.Camera.h,
+            a: 0
         });
+
+        link.setPosition(
+                clickRef.x,
+                clickRef.y
+                );
 
         link._key = key;
 
-        link.setSize(mapOptionSize);
-
-        link.setPosition(0, mapOptionStart + idx * -mapOptionSize);
-
-        idx += 1.5;
+        link.z = 100;
 
         link.clickCallback = function () {
             var key = this._key;
