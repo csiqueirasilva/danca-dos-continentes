@@ -183,8 +183,8 @@ function GameInstance(ops) {
             for (var i = 0; i < pieces.length; i++) {
                 var p = pieces[i];
                 target[p.name] = {};
-                target[p.name].x = p.x / this.Canvas.w;
-                target[p.name].y = p.y / this.Canvas.h;
+                target[p.name].x = p.x / GameInstance.Camera.w;
+                target[p.name].y = p.y / GameInstance.Camera.h;
                 var rot = (p.rotation % (Math.PI * 2)) / (Math.PI * 2)
                 if (rot < 0) {
                     rot += 1;
@@ -218,7 +218,7 @@ function GameInstance(ops) {
         window.pieces = pieces;
         this._startDelay = 1;
     } else {
-        this._startDelay = 300;
+        this._startDelay = 800;
     }
 }
 
