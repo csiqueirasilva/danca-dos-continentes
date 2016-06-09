@@ -30,9 +30,11 @@ function Mouse(canvas, camera, layers) {
 
     function checkTopElementInLayers(mouseX, mouseY) {
         var topElement = null;
+        
         for (var i = layers.length - 1; i >= 0 && topElement === null; i--) {
             topElement = checkTopElement(layers[i]._children, mouseX, mouseY);
         }
+
         return topElement;
     }
 
@@ -75,6 +77,8 @@ function Mouse(canvas, camera, layers) {
 
         if (LastTopElement && LastTopElement.mouseWheel instanceof Function) {
             LastTopElement.mouseWheel(CurrentMousePosition.x, CurrentMousePosition.y, direction, e);
+        } else if (DragElement && DragElement.mouseWheel instanceof Function) {
+            DragElement.mouseWheel(CurrentMousePosition.x, CurrentMousePosition.y, direction, e);
         }
     });
 
@@ -108,8 +112,8 @@ function Mouse(canvas, camera, layers) {
                 RightMouseDown = false;
         }
 
-        if (LastTopElement && LastTopElement.mouseUp instanceof Function) {
-            LastTopElement.mouseUp(e);
+        if (DragElement && DragElement.mouseUp instanceof Function) {
+            DragElement.mouseUp(e);
             DragElement = null;
         }
     });
@@ -124,23 +128,35 @@ function Mouse(canvas, camera, layers) {
 
         CurrentMousePosition.x = mouseX;
         CurrentMousePosition.y = mouseY;
+        
+        if(DragElement !== null) {
+            
+            if (DragElement && DragElement.mouseMove instanceof Function) {
+                DragElement.mouseMove(mouseX, mouseY);
+            }
+            
+            LastTopElement = DragElement;
+            
+        } else {
+        
+            var topElement = checkTopElementInLayers(mouseX, mouseY);
 
-        var topElement = checkTopElementInLayers(mouseX, mouseY);
-
-        if (topElement && topElement.mouseMove instanceof Function) {
-            topElement.mouseMove(mouseX, mouseY);
-        }
-
-        if (topElement !== LastTopElement) {
-            if (LastTopElement !== null && LastTopElement.mouseOut instanceof Function) {
-                LastTopElement.mouseOut();
+            if (topElement && topElement.mouseMove instanceof Function) {
+                topElement.mouseMove(mouseX, mouseY);
             }
 
-            LastTopElement = topElement;
+            if (topElement !== LastTopElement) {
+                if (LastTopElement !== null && LastTopElement.mouseOut instanceof Function) {
+                    LastTopElement.mouseOut();
+                }
 
-            if (LastTopElement !== null && LastTopElement.mouseOver instanceof Function) {
-                LastTopElement.mouseOver();
+                LastTopElement = topElement;
+
+                if (LastTopElement !== null && LastTopElement.mouseOver instanceof Function) {
+                    LastTopElement.mouseOver();
+                }
             }
+        
         }
 
     });
@@ -165,10 +181,26 @@ function Mouse(canvas, camera, layers) {
 
     }, 2);
 
+    function sumWithLimit(currentVal, limitVal, icr) {
+        var ret = 0;
+
+        var target = currentVal + icr;
+
+        if (!limitVal || (target > -limitVal && target < limitVal)) {
+            ret = icr;
+        }
+
+        return ret;
+    }
+
     function dragMouseDown(element) {
         document.body.style.cursor = 'move';
-        element.x += CurrentMousePosition.x - LastMousePosition.x;
-        element.y += CurrentMousePosition.y - LastMousePosition.y;
+
+        var moveX = CurrentMousePosition.x - LastMousePosition.x;
+        var moveY = CurrentMousePosition.y - LastMousePosition.y;
+
+        element.x += sumWithLimit(element.x, element.dragLimitX * GameInstance.Camera.w, moveX);
+        element.y += sumWithLimit(element.y, element.dragLimitY * GameInstance.Camera.h, moveY);
     }
 
     function dragMouseUp(element) {

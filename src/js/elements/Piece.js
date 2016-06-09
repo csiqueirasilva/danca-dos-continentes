@@ -10,6 +10,9 @@ function Piece(ops) {
     this.snapped = false;
     this.visible = false;
 
+    this.dragLimitX = 0.4;
+    this.dragLimitY = 0.35;
+
     this.color.r = 255;
     this.color.g = 255;
     this.color.b = 0;
@@ -164,8 +167,8 @@ Piece.prototype.initForGameplay = function (map) {
 
     this.setZIndex(Piece.prototype.zLevelUnsnapped);
     this.snapped = false;
-    this.x = (Math.random() * 0.8 - 0.4) * GameInstance.Camera.w;
-    this.y = (Math.random() * 0.8 - 0.4) * GameInstance.Camera.h;
+    this.x = (Math.random() * this.dragLimitX * 0.9 * (Math.random() > 0.5 ? 1 : -1)) * GameInstance.Camera.w;
+    this.y = (Math.random() * this.dragLimitY * 0.9 * (Math.random() > 0.5 ? 1 : -1)) * GameInstance.Camera.h;
     this.rotation = Piece.prototype.rotationAngle * parseInt(Math.random() * 100);
     this.visible = true;
     
