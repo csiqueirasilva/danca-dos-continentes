@@ -57,6 +57,9 @@ Map.prototype.MAIN_MENU_REF = {
 })();
 
 Map.prototype.initForGameplay = function (endGameCallback) {
+    
+    Piece.prototype.SPAWN_IDX = 0;
+    
     this.visible = true;
     this.pieceCounter = 0;
     this.pieceTable = {};

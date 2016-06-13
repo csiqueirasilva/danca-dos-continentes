@@ -20,6 +20,8 @@ function Piece(ops) {
 
 Piece.prototype = Object.create(SquareImage.prototype);
 
+Piece.prototype.SPAWN_IDX = 0;
+
 Piece.prototype.NAMES = [
     'AFR1',
     'AFR2',
@@ -42,7 +44,7 @@ Piece.prototype.zLevelSnapped = 8;
 
 Piece.prototype.rotationAngle = 6 * Math.PI / 180;
 
-Piece.prototype.snapRadius = (16 / Math.sqrt(1920 * 1920 + 1080 * 1080)) * Math.sqrt(window.innerWidth * window.innerWidth + window.innerHeight * window.innerHeight);
+Piece.prototype.snapRadius = (21 / Math.sqrt(1920 * 1920 + 1080 * 1080)) * Math.sqrt(window.innerWidth * window.innerWidth + window.innerHeight * window.innerHeight);
 
 Piece.prototype.snapRotation = 0.0333;
 
@@ -167,8 +169,25 @@ Piece.prototype.initForGameplay = function (map) {
 
     this.setZIndex(Piece.prototype.zLevelUnsnapped);
     this.snapped = false;
-    this.x = (Math.random() * this.dragLimitX * 0.9 * (Math.random() > 0.5 ? 1 : -1)) * GameInstance.Camera.w;
-    this.y = (Math.random() * this.dragLimitY * 0.9 * (Math.random() > 0.5 ? 1 : -1)) * GameInstance.Camera.h;
+
+    var spawnIdx = Piece.prototype.SPAWN_IDX++;
+    var spawnX;
+    var spawnY;
+
+    if(spawnIdx < 4) {
+        spawnX = this.dragLimitX * 0.95 * GameInstance.Camera.w;
+        spawnY = this.dragLimitY * 0.95 * GameInstance.Camera.h - spawnIdx * GameInstance.Camera.h * 0.175;
+    } else if (spawnIdx > 9) {
+        spawnX = -this.dragLimitX * 0.95 * GameInstance.Camera.w;
+        spawnY = this.dragLimitY * 0.95 * GameInstance.Camera.h - (spawnIdx - 10) * GameInstance.Camera.h * 0.175;
+    } else {
+        spawnX = -this.dragLimitX * 0.675 * GameInstance.Camera.w + (spawnIdx - 4) * GameInstance.Camera.h * 0.19;
+        spawnY = -this.dragLimitY * 0.95 * GameInstance.Camera.h;
+    }
+    
+    this.x = spawnX;
+    this.y = spawnY;
+    
     this.rotation = Piece.prototype.rotationAngle * parseInt(Math.random() * 100);
     this.visible = true;
     
