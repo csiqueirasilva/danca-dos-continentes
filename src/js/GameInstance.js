@@ -116,12 +116,7 @@ function GameInstance(ops) {
                 setTimeout(function () {
                     GameInstance.removeFromUILayer(gameOverText);
                     delete gameOverText;
-
-                    bg.visible = false;
-                    pieceWrapper.visible = false;
-                    mainMenuWrapper.visible = true;
-
-                    GameInstance.redrawBackgroundLayer();
+                    bg.resetGame();
                 }, 5000);
             });
 
@@ -179,6 +174,19 @@ function GameInstance(ops) {
     menuImage.scaleH = backgroundScaleH;
 
     mainMenuWrapper.add(menuImage);
+
+    this.resetGame = function (bg) {
+        bg.visible = false;
+        pieceWrapper.visible = false;
+        mainMenuWrapper.visible = true;
+        this.idleText.visible = false;
+        
+        GameInstance.redrawBackgroundLayer();
+    };
+
+    this.idleText = new ReturnToMainMenuText();
+    this.idleText.visible = false;
+    GameInstance.addToUILayer(this.idleText);
 
     if (this._debug) {
         window.printPieceTarget = function printPieceTarget() {

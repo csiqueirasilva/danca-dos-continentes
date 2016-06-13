@@ -12,6 +12,11 @@ Map.prototype = Object.create(SquareImage.prototype);
 
 Map.prototype.NUM_PIECES = Piece.prototype.NAMES.length;
 
+Map.prototype.INACTIVITY_INTERVAL = null;
+
+Map.prototype.INACTIVITY_MS_TIME = 30 * 1000;
+Map.prototype.INACTIVITY_MS_WARNING_TIME = 20 * 1000;
+
 Map.prototype.NAMES = {
     'futuro': 'Futuro',
     'atual': 'Atual',
@@ -67,6 +72,28 @@ Map.prototype.initForGameplay = function (endGameCallback) {
         throw "Undefined end game callback";
     }
     this._endGameCallback = endGameCallback;
+    
+    GameInstance.Mouse.setTimestamp();
+    
+    var map = this;
+    
+    Map.prototype.INACTIVITY_INTERVAL = setInterval(function() {
+        var t = GameInstance.Mouse.getLastTimestamp();
+        var now = new Date().getTime();
+        var diff = now - t;
+        
+        if (diff > Map.prototype.INACTIVITY_MS_TIME) {
+            map.resetGame();
+        } else if(diff > Map.prototype.INACTIVITY_MS_WARNING_TIME) {
+            var currentTime = Math.max((Map.prototype.INACTIVITY_MS_TIME - diff) / 1000, 0).toFixed(1);
+            GameInstance.idleText.setText(currentTime);
+            GameInstance.idleText.visible = true;
+        } else {
+            GameInstance.idleText.visible = false;
+        }
+        
+    }, 200);
+    
     GameInstance.redrawBackgroundLayer();
 };
 
@@ -89,4 +116,10 @@ Map.prototype.checkEndGame = function checkEndGame() {
 
 Map.prototype.getName = function getName() {
     return Map.prototype.NAMES[this.key];
+};
+
+Map.prototype.resetGame = function resetGame() {
+    window.clearInterval(Map.prototype.INACTIVITY_INTERVAL);
+    Map.prototype.INACTIVITY_INTERVAL = null;
+    GameInstance.resetGame(this);
 };

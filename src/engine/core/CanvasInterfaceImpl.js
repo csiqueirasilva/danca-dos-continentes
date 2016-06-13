@@ -82,7 +82,7 @@ CanvasInterfaceImpl.prototype.drawText = function drawText(element) {
 
     this.ctx.fillStyle = 'rgb(' + element.color.r + ', ' + element.color.g + ', ' + element.color.b + ')';
     this.ctx.textBaseline = 'top';
-    this.ctx.fillText(element.txt, -ndc.size.x / 2, -ndc.size.y / 2);
+    this.ctx.fillText(element.getText instanceof Function ? element.getText() : element.txt, -ndc.size.x / 2, -ndc.size.y / 2);
 };
 
 CanvasInterfaceImpl.prototype.drawImage = function drawImage(element) {

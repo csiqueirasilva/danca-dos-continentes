@@ -1,5 +1,7 @@
 function Mouse(canvas, camera, layers) {
 
+    var LAST_EVENT_TIMESTAMP = 0;
+
     /* Mouse click */
     var CurrentMousePosition = {
         x: 0,
@@ -80,6 +82,8 @@ function Mouse(canvas, camera, layers) {
         } else if (DragElement && DragElement.mouseWheel instanceof Function) {
             DragElement.mouseWheel(CurrentMousePosition.x, CurrentMousePosition.y, direction, e);
         }
+        
+        LAST_EVENT_TIMESTAMP = new Date().getTime();
     });
 
     canvas.addEventListener('mousedown', function (e) {
@@ -98,6 +102,8 @@ function Mouse(canvas, camera, layers) {
             DragElement = LastTopElement;
             LastTopElement.mouseDown(CurrentMousePosition.x, CurrentMousePosition.y, e);
         }
+        
+        LAST_EVENT_TIMESTAMP = new Date().getTime();
     });
 
     canvas.addEventListener('mouseup', function (e) {
@@ -116,6 +122,8 @@ function Mouse(canvas, camera, layers) {
             DragElement.mouseUp(e);
             DragElement = null;
         }
+        
+        LAST_EVENT_TIMESTAMP = new Date().getTime();
     });
 
 
@@ -159,6 +167,7 @@ function Mouse(canvas, camera, layers) {
         
         }
 
+        LAST_EVENT_TIMESTAMP = new Date().getTime();
     });
 
     // methods
@@ -227,6 +236,12 @@ function Mouse(canvas, camera, layers) {
     }
 
     return {
-        MOUSE_BTN: MOUSE_BTN
+        MOUSE_BTN: MOUSE_BTN,
+        getLastTimestamp: function() {
+            return LAST_EVENT_TIMESTAMP;
+        },
+        setTimestamp: function() {
+            LAST_EVENT_TIMESTAMP = new Date().getTime();
+        }
     };
 }

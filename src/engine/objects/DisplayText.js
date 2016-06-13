@@ -28,7 +28,9 @@ DisplayText.prototype.beforeDraw = function (ctx) {
 
     ctx.font = fontSize + "px " + (this.font || "Arial");
 
-    var width = ctx.measureText(this.txt).width;
+    var txt = this.getText instanceof Function ? this.getText() : this.txt;
+
+    var width = ctx.measureText(txt).width;
 
     this.w = (width / GameInstance.Camera.w) * GameInstance.Camera.w;
 };
