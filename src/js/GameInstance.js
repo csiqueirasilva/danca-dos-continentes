@@ -96,8 +96,11 @@ function GameInstance(ops) {
 
             var map = maps[key];
 
-            for (var i = pieces.length - 1; i >= 0; i--) {
-                pieces[i].initForGameplay(map);
+            var sortedPieces = pieces.slice(0);
+
+            while(sortedPieces.length > 0) {
+                var piece = sortedPieces.splice((sortedPieces.length - 1) * Math.random(), 1)[0];
+                piece.initForGameplay(map);
             }
 
             map.initForGameplay(function endGameCallback() {
