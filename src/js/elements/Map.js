@@ -94,6 +94,9 @@ Map.prototype.initForGameplay = function (endGameCallback) {
         
     }, 200);
     
+	GameInstance.timerText.start();
+	GameInstance.timerText.visible = true;
+	
     GameInstance.redrawBackgroundLayer();
 };
 
@@ -110,6 +113,7 @@ Map.prototype.incrPiece = function (pieceName) {
 
 Map.prototype.checkEndGame = function checkEndGame() {
     if (this.pieceCounter === Map.prototype.NUM_PIECES) {
+		GameInstance.timerText.stop();
         this._endGameCallback();
     }
 };

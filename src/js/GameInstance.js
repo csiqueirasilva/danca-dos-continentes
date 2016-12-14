@@ -105,7 +105,7 @@ function GameInstance(ops) {
 
             map.initForGameplay(function endGameCallback() {
 
-                var bg = this;
+				var bg = this;
 
                 var gameOverText = new GameOverText({
                     map: bg
@@ -180,10 +180,15 @@ function GameInstance(ops) {
         pieceWrapper.visible = false;
         mainMenuWrapper.visible = true;
         this.idleText.visible = false;
+        this.timerText.visible = false;
         
         GameInstance.redrawBackgroundLayer();
     };
 
+	this.timerText = new TimerText();
+	this.timerText.visible = false;
+	GameInstance.addToUILayer(this.timerText);
+	
     this.idleText = new ReturnToMainMenuText();
     this.idleText.visible = false;
     GameInstance.addToUILayer(this.idleText);
